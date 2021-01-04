@@ -4,16 +4,19 @@ import { View, Text, StyleSheet, Image } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { IconBack, IconNext } from '../../../assets'
 
-const Login = ({navigation}) => {
+const Register = ({navigation}) => {
     return (
         <View style={styles.container}>
             <TouchableOpacity>
                 <Image source={IconBack} />
             </TouchableOpacity>
             <View style={styles.rowTitle}>
-                <Text style={styles.textTitle}>Login</Text>
+                <Text style={styles.textTitle}>Sign Up</Text>
             </View>
             <View style={styles.containerForm}>
+                <View style={styles.input}>
+                    <Input placeholder='Name' />
+                </View>
                 <View style={styles.input}>
                     <Input placeholder='Email' />
                 </View>
@@ -22,18 +25,16 @@ const Login = ({navigation}) => {
                 </View>
             </View>
             <View style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', marginTop: 16, marginRight: 10}}>
-                <Text style={{fontSize: 14}}>Forgot your password?</Text>
+                <Text style={{fontSize: 14}}>Already have an account?</Text>
                 <TouchableOpacity style={{marginLeft:7}} onPress={() => {
-                    navigation.navigate('ForgotPassword')
+                    navigation.navigate('Login')
                 }}>
                     <Image source={IconNext} />
                 </TouchableOpacity>
             </View>
             <View style={{alignItems: 'center', marginTop: 32 }}>
-                <TouchableOpacity style={styles.btnLogin} onPress={() => {
-                   navigation.navigate('Home') 
-                }}>
-                    <Text style={{color: 'white'}}>LOGIN</Text>
+                <TouchableOpacity style={styles.btnLogin}>
+                    <Text style={{color: 'white'}}>Sign Up</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -80,4 +81,4 @@ const styles = StyleSheet.create({
 
 })
 
-export default Login
+export default Register

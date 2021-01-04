@@ -2,8 +2,13 @@ import React from 'react';
 import 'react-native-gesture-handler'
 import {NavigationContainer} from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack';
-import Splash from './src/screens/splash';
-import Login from './src/screens/auth/login';
+
+
+import Splash from './screens/splash';
+import Login from './screens/auth/login';
+import Register from './screens/auth/register';
+import ForgotPassword from './screens/auth/forgotPassword';
+import Home from './screens/home';
 
 
 const Stack = createStackNavigator();
@@ -21,6 +26,24 @@ const appRouter = () => {
         <Stack.Screen
         name="Login"
         component={Login}
+        options = {{
+          headerShown :false
+        }} />
+        <Stack.Screen
+        name="Register"
+        component={Register}
+        options = {{
+          headerShown :false
+        }} />
+        <Stack.Screen
+        name="ForgotPassword"
+        component={ForgotPassword}
+        options = {{
+          headerShown :false
+        }} />
+        <Stack.Screen
+        name="Home"
+        component={Home}
         options = {{
           headerShown :false
         }} />

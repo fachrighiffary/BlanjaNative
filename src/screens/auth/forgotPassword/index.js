@@ -4,42 +4,36 @@ import { View, Text, StyleSheet, Image } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { IconBack, IconNext } from '../../../assets'
 
-const Login = ({navigation}) => {
+
+const ForgotPassword = ({navigation}) => {
     return (
         <View style={styles.container}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => {
+                navigation.goBack()
+            }}>
                 <Image source={IconBack} />
             </TouchableOpacity>
             <View style={styles.rowTitle}>
-                <Text style={styles.textTitle}>Login</Text>
+                <Text style={styles.textTitle}>Forgot Password</Text>
             </View>
             <View style={styles.containerForm}>
-                <View style={styles.input}>
-                    <Input placeholder='Email' />
+                <View style={{width: 343}}>
+                    <Text>Please, enter your email address. You will receive a link to create a new password via email.</Text>
                 </View>
                 <View style={styles.input}>
-                    <Input placeholder='Password' type="password" />
+                    <Input placeholder='Email' type="email" />
                 </View>
-            </View>
-            <View style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', marginTop: 16, marginRight: 10}}>
-                <Text style={{fontSize: 14}}>Forgot your password?</Text>
-                <TouchableOpacity style={{marginLeft:7}} onPress={() => {
-                    navigation.navigate('ForgotPassword')
-                }}>
-                    <Image source={IconNext} />
-                </TouchableOpacity>
             </View>
             <View style={{alignItems: 'center', marginTop: 32 }}>
                 <TouchableOpacity style={styles.btnLogin} onPress={() => {
-                   navigation.navigate('Home') 
+                    navigation.navigate('Login')
                 }}>
-                    <Text style={{color: 'white'}}>LOGIN</Text>
+                    <Text style={{color: 'white'}}>Send</Text>
                 </TouchableOpacity>
             </View>
         </View>
     )
 }
-
 const styles = StyleSheet.create({
     container : {
         paddingHorizontal : 15,
@@ -64,7 +58,7 @@ const styles = StyleSheet.create({
         borderColor: 'black',
         justifyContent: 'center',
         paddingHorizontal: 15,
-        marginTop: 8,
+        marginTop: 16,
     },
     btnLogin: {
         display: 'flex',
@@ -80,4 +74,7 @@ const styles = StyleSheet.create({
 
 })
 
-export default Login
+
+
+
+export default ForgotPassword

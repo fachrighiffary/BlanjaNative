@@ -5,7 +5,7 @@ import { Logo } from '../../assets'
 const Splash = ({navigation}) => {
     useEffect(() => {
         setTimeout(() => {
-            navigation.navigate('Login')
+            navigation.navigate('Register')
         }, 3000);
     })
     return(
