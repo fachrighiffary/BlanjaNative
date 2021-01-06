@@ -1,3 +1,4 @@
+import { Spinner } from 'native-base'
 import React, {useEffect} from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { Logo } from '../../assets'
@@ -11,6 +12,7 @@ const Splash = ({navigation}) => {
     return(
         <View style={styles.container}>
             <Image source={Logo} />
+            <Spinner color='red' />
         </View>
     )
 }

@@ -8,7 +8,8 @@ import Splash from './screens/splash';
 import Login from './screens/auth/login';
 import Register from './screens/auth/register';
 import ForgotPassword from './screens/auth/forgotPassword';
-import Home from './screens/home';
+import Homescreen from './screens/homescreen';
+import DetailProduct from './screens/detail';
 
 
 const Stack = createStackNavigator();
@@ -18,7 +19,7 @@ const appRouter = () => {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen 
-        name='Splah' 
+        name='Splash' 
         component={Splash}
         options={{
           headerShown: false,
@@ -42,8 +43,14 @@ const appRouter = () => {
           headerShown :false
         }} />
         <Stack.Screen
-        name="Home"
-        component={Home}
+        name="HomeScreen"
+        component={Homescreen}
+        options = {{
+          headerShown :false
+        }} />
+        <Stack.Screen
+        name="Detail"
+        component={DetailProduct}
         options = {{
           headerShown :false
         }} />

@@ -1,13 +1,16 @@
 import { Input } from 'native-base'
-import React from 'react'
-import { View, Text, StyleSheet, Image } from 'react-native'
+import React, { Component } from 'react'
+import { View, Text, StyleSheet, Image, KeyboardAvoidingView } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { IconBack, IconNext } from '../../../assets'
 
-const Login = ({navigation}) => {
-    return (
-        <View style={styles.container}>
-            <TouchableOpacity>
+class Login extends Component{
+    render(){
+        return(
+            <KeyboardAvoidingView style={styles.container}>
+            <TouchableOpacity onPress={ () => {
+                this.props.navigation.goBack();
+            }}>
                 <Image source={IconBack} />
             </TouchableOpacity>
             <View style={styles.rowTitle}>
@@ -24,20 +27,22 @@ const Login = ({navigation}) => {
             <View style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', marginTop: 16, marginRight: 10}}>
                 <Text style={{fontSize: 14}}>Forgot your password?</Text>
                 <TouchableOpacity style={{marginLeft:7}} onPress={() => {
-                    navigation.navigate('ForgotPassword')
+                    this.props.navigation.navigate('ForgotPassword')
                 }}>
                     <Image source={IconNext} />
                 </TouchableOpacity>
             </View>
             <View style={{alignItems: 'center', marginTop: 32 }}>
                 <TouchableOpacity style={styles.btnLogin} onPress={() => {
-                   navigation.navigate('Home') 
+                   this.props.navigation.navigate('HomeScreen') 
                 }}>
                     <Text style={{color: 'white'}}>LOGIN</Text>
                 </TouchableOpacity>
             </View>
-        </View>
-    )
+            
+        </KeyboardAvoidingView>
+        )
+    }
 }
 
 const styles = StyleSheet.create({

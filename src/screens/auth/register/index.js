@@ -7,9 +7,6 @@ import { IconBack, IconNext } from '../../../assets'
 const Register = ({navigation}) => {
     return (
         <View style={styles.container}>
-            <TouchableOpacity>
-                <Image source={IconBack} />
-            </TouchableOpacity>
             <View style={styles.rowTitle}>
                 <Text style={styles.textTitle}>Sign Up</Text>
             </View>
