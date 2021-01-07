@@ -3,7 +3,7 @@ import { View, Text } from 'react-native'
 
 const Favorites = () => {
     return (
-        <View>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             <Text>Ini adalah halaman favourit</Text>
         </View>
     )

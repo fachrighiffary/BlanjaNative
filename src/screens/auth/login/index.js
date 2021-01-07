@@ -1,48 +1,98 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios'
 import { Input } from 'native-base'
-import React, { Component } from 'react'
+import React, { Component, useState } from 'react'
 import { View, Text, StyleSheet, Image, KeyboardAvoidingView } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { TextInput, TouchableOpacity } from 'react-native-gesture-handler'
 import { IconBack, IconNext } from '../../../assets'
 
-class Login extends Component{
-    render(){
-        return(
-            <KeyboardAvoidingView style={styles.container}>
-            <TouchableOpacity onPress={ () => {
-                this.props.navigation.goBack();
-            }}>
-                <Image source={IconBack} />
-            </TouchableOpacity>
-            <View style={styles.rowTitle}>
-                <Text style={styles.textTitle}>Login</Text>
-            </View>
-            <View style={styles.containerForm}>
-                <View style={styles.input}>
-                    <Input placeholder='Email' />
-                </View>
-                <View style={styles.input}>
-                    <Input placeholder='Password' type="password" />
-                </View>
-            </View>
-            <View style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', marginTop: 16, marginRight: 10}}>
-                <Text style={{fontSize: 14}}>Forgot your password?</Text>
-                <TouchableOpacity style={{marginLeft:7}} onPress={() => {
-                    this.props.navigation.navigate('ForgotPassword')
-                }}>
-                    <Image source={IconNext} />
-                </TouchableOpacity>
-            </View>
-            <View style={{alignItems: 'center', marginTop: 32 }}>
-                <TouchableOpacity style={styles.btnLogin} onPress={() => {
-                   this.props.navigation.navigate('HomeScreen') 
-                }}>
-                    <Text style={{color: 'white'}}>LOGIN</Text>
-                </TouchableOpacity>
-            </View>
-            
-        </KeyboardAvoidingView>
-        )
+
+const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('token');
+      const userid = await AsyncStorage.getItem('userid');
+      if (value !== null) {
+        // value previously stored
+        console.log(value);
+        console.log(userid);
+      }
+    } catch (e) {
+      // error reading value
     }
+  };
+
+const Login = ({navigation}) => {
+
+    const [email, setemail] = useState('')
+    const [password, setpassword] = useState('')
+
+    const handleSubmit = () => {
+        const data = {
+          email,
+          password
+        };
+        //console.log(data)
+        axios.post('http://10.0.2.2:8000/auth/login', data)
+        .then(async (res) => {
+            //console.log(res.data.data)
+            const token = res.data.data.token;
+            const id = res.data.data.id;
+            const userid = id.toString();
+            await AsyncStorage.setItem('token', token);
+            await AsyncStorage.setItem('userid', userid);
+
+            navigation.replace('HomeScreen')
+            //console.log(token);
+            await getData();
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+    }
+
+    return (
+            <KeyboardAvoidingView style={styles.container}>
+                <TouchableOpacity onPress={ () => {
+                    navigation.goBack();
+                }}>
+                    <Image source={IconBack} />
+                </TouchableOpacity>
+                <View style={styles.rowTitle}>
+                    <Text style={styles.textTitle}>Login</Text>
+                </View>
+                <View style={styles.containerForm}>
+                    <View style={styles.input}>
+                        <Input 
+                            placeholder='Email'
+                            name="email" 
+                            value={email} onChangeText={(email) => setemail(email)}
+                        />
+                    </View>
+                    <View style={styles.input}>
+                        <Input 
+                            placeholder='Password' 
+                            secureTextEntry={true}
+                            value={password} 
+                            name="password" 
+                            onChangeText={(password) => setpassword(password)} 
+                        />
+                    </View>
+                </View>
+                <View style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', marginTop: 16, marginRight: 10}}>
+                    <Text style={{fontSize: 14}}>Forgot your password?</Text>
+                    <TouchableOpacity style={{marginLeft:7}} onPress={() => {
+                        navigation.navigate('ForgotPassword')
+                    }}>
+                        <Image source={IconNext} />
+                    </TouchableOpacity>
+                </View>
+                <View style={{alignItems: 'center', marginTop: 32 }}>
+                    <TouchableOpacity style={styles.btnLogin} onPress={handleSubmit}>
+                        <Text style={{color: 'white'}}>LOGIN</Text>
+                    </TouchableOpacity>
+                </View>
+            </KeyboardAvoidingView>
+    )
 }
 
 const styles = StyleSheet.create({

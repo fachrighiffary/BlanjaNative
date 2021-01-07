@@ -3,7 +3,7 @@ import { Image, StyleSheet, Text, View } from 'react-native'
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler'
 import { Search } from '../../assets'
 
-export class ShipAddress extends Component {
+export class ShippingAddress extends Component {
     render() {
         return (
             <View style={{padding: 16}}>
@@ -67,4 +67,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default ShipAddress
+export default ShippingAddress

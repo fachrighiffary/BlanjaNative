@@ -1,47 +1,74 @@
-import React, { Component } from 'react'
+import axios from 'axios'
+import React, {useEffect, useState} from 'react'
 import { Text, View, StyleSheet, Image } from 'react-native'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import { Image1, Product1, Star0 } from '../../assets'
+import Rating from './rating'
 
-export class Product extends Component {
-    
-    Detail = () => {
-        this.props.navigation.navigate('Detail')
+const Product = ({status, navigation, url}) => {
+
+    const [product, setProducts] = useState([]);
+
+    useEffect(() => {
+        getData();
+    }, [])
+
+    const getData = () => {
+        axios
+        .get('http://10.0.2.2:8000/products' + url)
+        .then(res => {
+            //console.log(res.data.data.products)
+            setProducts(res.data.data.products)
+        })
+        .catch((err) => {
+            console.log(err)
+        })
     }
-    render() {
-        return (
-            <>
-            
+    const goToDetail = (id) => {
+        navigation.navigate('Detail', id)
+
+    }
+
+    return(
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{marginTop: 22}}>
-                <TouchableOpacity style={styles.card} onPress={this.Detail}>
-                    <View style={{position: 'relative'}}>
-                        <Image style={{position: 'relative', height: 184, width: 148, borderRadius: 15}}  source={Product1} />
-                        <View style={{height: 24, width: 40, backgroundColor: 'black', position: 'absolute', borderRadius: 10, justifyContent: 'center', alignItems: 'center', marginTop: 8, marginLeft: 8}}>
-                            <Text style={{color: 'white', fontSize: 11}}>New</Text>
-                        </View>
-                    </View>
-                    
-                    {/* Rating Star */}
-                    <View style={{flexDirection: 'row', marginTop: 8}}>
-                        <Image source={Star0} />
-                        <Image source={Star0} />
-                        <Image source={Star0} />
-                        <Image source={Star0} />
-                        <Image source={Star0} />
-                        <Text style={{fontSize: 10, marginLeft: 3, color:'#9B9B9B'}}>(0)</Text>
-                    </View>
-                    <View style={{marginTop: 7}}>
-                        <Text style={{color: '#9B9B9B'}}>OVS</Text>
-                    </View>
-                    <View style={{maxWidth: 148, maxHeight: 20, position: 'relative'}}>
-                         <Text style={{fontSize : 19, fontWeight: 'bold'}}>Blouse</Text>
-                         <Text style={{fontSize : 19, fontWeight: 'bold'}}>Rp. 10.000</Text>
-                    </View>
-                </TouchableOpacity>
+                {product && product.map(
+                    ({product_name, product_img, product_price, store_name, total_rating, id}, index ) => {
+                        let httpImage = { uri : 'http://10.0.2.2:8000' + product_img.split(',')[0]}
+                        return (
+                            <TouchableOpacity style={styles.card}  onPress={() => {
+                                goToDetail(id)
+                            }} key={id}>
+                                <View style={{position: 'relative'}} >
+                                    <Image 
+                                    style={{
+                                        position: 'relative',
+                                        height: 184, 
+                                        width: 148, 
+                                        borderRadius: 15
+                                        }}  
+                                        source={httpImage} />
+                                    <View style={{height: 24, width: 40, backgroundColor: 'black', position: 'absolute', borderRadius: 10, justifyContent: 'center', alignItems: 'center', marginTop: 8, marginLeft: 8}}>
+                                        <Text style={{color: 'white', fontSize: 11}}>{status}</Text>
+                                    </View>
+                                </View>
+                                
+                                {/* Rating Star */}
+                                <Rating total_rating={Math.round(total_rating)} />
+                                <View style={{marginTop: 7}}>
+                                    <Text style={{color: '#9B9B9B'}}>{store_name}</Text>
+                                </View>
+                                <View style={{maxWidth: 148, maxHeight: 20, position: 'relative'}}>
+                                    <Text style={{fontSize : 19, fontWeight: 'bold'}}>{product_name}</Text>
+                                    <Text style={{fontSize : 19, fontWeight: 'bold'}}>Rp.{product_price}</Text>
+                                </View>
+                            </TouchableOpacity>
+
+                        )
+                    }
+                )}
+
             </ScrollView>
-            </>
-        )
-    }
+    )
 }
 
 const styles = StyleSheet.create({

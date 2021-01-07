@@ -3,7 +3,7 @@ import { View, Text, Image, StyleSheet } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { Product4, Search,IconBack } from '../../assets'
 
-const Bag = () => {
+const Bag = ({navigation}) => {
     return (
         <View style={{padding: 14}}>
             <View style={{width: '100%', justifyContent: 'space-between', flexDirection: 'row', marginTop: 24}}>
@@ -45,6 +45,22 @@ const Bag = () => {
                     </View>
                 </View>
             </View>
+            <View style={{ marginTop: 100, height: 155, width: '100%', bottom: -170}}>
+                <View style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between'
+                }}>
+                    <Text>Total Amount</Text>
+                    <Text>Rp.100,000</Text>
+                </View>
+                <TouchableOpacity onPress={() => {
+                    navigation.navigate('Checkout')
+                }}>
+                    <View style={styles.btnCheckout}>
+                        <Text style={{color: 'white'}}>CHECK OUT</Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
         </View>
     )
 }
@@ -74,6 +90,16 @@ const styles = StyleSheet.create({
         width: 110, 
         justifyContent: 'space-between',
         marginTop: 4
+    },
+    btnCheckout: {
+        height: 48,
+        width: 343,
+        backgroundColor: '#DB3022',
+        borderRadius: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 34,
+        alignSelf: 'center'
     }
 })
 

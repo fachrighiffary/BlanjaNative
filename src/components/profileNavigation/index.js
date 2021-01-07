@@ -26,10 +26,7 @@ export class ProfileNavigation extends Component {
                 }}/>
                 <Stack.Screen 
                 name='ShippingAddress' 
-                component={ShippingAddress}
-                options={{
-                headerShown: false,
-                }}/>
+                component={ShippingAddress}/>
                 <Stack.Screen 
                 name='Setting' 
                 component={Setting}

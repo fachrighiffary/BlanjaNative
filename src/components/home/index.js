@@ -1,10 +1,11 @@
-import React from 'react'
-import { View, Text, StyleSheet, Image } from 'react-native'
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
-import { Image1, Product1, Star0 } from '../../assets'
-import Product from '../product'
+import React from 'react';
+import { Image, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { Image1 } from '../../assets';
+import Product from '../product';
 
-const Home = ({navigation}) => {
+const Home = ({navigation, route}) => {
+
     return (
         <ScrollView>
             <View style={styles.header}>
@@ -21,7 +22,8 @@ const Home = ({navigation}) => {
                     <Text style={{marginTop: 51}}>view All</Text>
                 </TouchableOpacity>
             </View>
-            <Product  navigation={navigation}/>
+            <Product  navigation={navigation}  status="New"  url="?new=desc"/>
+            
             <View style={styles.titleText}>
                 <View style={{marginTop: 31}}>
                     <Text style={styles.fontTitle}>Popular</Text>
@@ -32,7 +34,7 @@ const Home = ({navigation}) => {
                     <Text style={{marginTop: 51}}>view All</Text>
                 </TouchableOpacity>
             </View>
-            <Product navigation={navigation}/>
+            <Product navigation={navigation} status="Popular" url="?popular=desc"/>
         </ScrollView>
     )
 }

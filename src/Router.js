@@ -10,6 +10,9 @@ import Register from './screens/auth/register';
 import ForgotPassword from './screens/auth/forgotPassword';
 import Homescreen from './screens/homescreen';
 import DetailProduct from './screens/detail';
+import Checkout from './components/bag/checkout';
+import ShippingAddress from './components/bag/shipaddress';
+import Success from './components/bag/success';
 
 
 const Stack = createStackNavigator();
@@ -51,6 +54,20 @@ const appRouter = () => {
         <Stack.Screen
         name="Detail"
         component={DetailProduct}
+        options = {{
+          headerShown :false
+        }} />
+        <Stack.Screen
+        name="Checkout"
+        component={Checkout}
+       />
+       <Stack.Screen
+        name="ShippingAddress"
+        component={ShippingAddress}
+       />
+       <Stack.Screen
+        name="Success"
+        component={Success}
         options = {{
           headerShown :false
         }} />

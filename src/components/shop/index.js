@@ -1,11 +1,25 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, Image } from 'react-native'
+import { TouchableOpacity } from 'react-native-gesture-handler'
+import { IconBack, Search } from '../../assets'
+import ShopNavigation from '../shopNavigation'
 
-const Shop = () => {
+const Shop = ({navigation}) => {
     return (
-        <View>
-            <Text>Ini adalah halmaan Shop</Text>
-        </View>
+        <>
+            <View style={{ paddingHorizontal: 16,width: '100%',marginBottom: 20, justifyContent: 'space-between', flexDirection: 'row', marginTop: 24}}>
+                <TouchableOpacity onPress={()=> {
+                    navigation.goBack()
+                }}>
+                    <Image source={IconBack} />
+                </TouchableOpacity>
+                <Text>Categories</Text>
+                <TouchableOpacity>
+                    <Image source={Search} />
+                </TouchableOpacity>
+            </View>
+            <ShopNavigation/>
+        </>
     )
 }
 

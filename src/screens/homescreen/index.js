@@ -4,9 +4,9 @@ import {NavigationContainer} from '@react-navigation/native'
 import TabNavigator from '../../components/navigation/tabNavigator'
 
 
-const HomeScreen = () => {
+const HomeScreen = ({Route}) => {
   return (
-      <TabNavigator />
+      <TabNavigator Route={Route} />
   )
 }
 
