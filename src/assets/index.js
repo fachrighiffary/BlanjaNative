@@ -9,7 +9,9 @@ import Go from './icon/go.png'
 import MasterCard from './icon/mastercard.png'
 import PosIndo from './icon/posindo.png'
 import Gopay from './icon/gopay.png'
-
+import Filter from './icon/filter.png'
+import Block from './icon/block.png'
+import Sort from './icon/sort.png'
 
 import Image1 from './image/home1.jpg'
 import Product1 from './image/product1.png'
@@ -21,6 +23,14 @@ import Product6 from './image/product6.jpg'
 import Product7 from './image/product7.jpg'
 import ImgProfile from './image/profile.jpg'
 import SuccessLogo from './icon/success.png'
+
+
+import Jacket from './category/jacket.png'
+import Pants from './category/pants.png'
+import Shoes from './category/shoes.png'
+import Short from './category/short.png'
+import Tshirt from './category/tshirt.png'
+
 
 export {
     Logo,
@@ -43,5 +53,13 @@ export {
     MasterCard,
     PosIndo,
     Gopay,
-    SuccessLogo
+    SuccessLogo,
+    Jacket,
+    Pants,
+    Shoes,
+    Short,
+    Tshirt,
+    Filter,
+    Block,
+    Sort
 };

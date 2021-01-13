@@ -20,7 +20,7 @@ const Success = ({navigation}) => {
                     }}>Your order will be delivered soon. Thank you for choosing our app!</Text>
             </View>
             <TouchableOpacity onPress={() => {
-                navigation.navigate('HomeScreen')
+                navigation.popToTop('HomeScreen')
             }}>
                 <View style={styles.btn}>
                     <Text style={{color: 'white'}}>CONTINUE SHOPPING</Text>

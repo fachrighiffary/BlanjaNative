@@ -1,12 +1,49 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import axios from 'axios'
 import React, { Component } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
-import { TextInput, TouchableOpacity } from 'react-native-gesture-handler'
+import { ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler'
 import { Search } from '../../assets'
+import {API_URL} from "@env"
 
 export class ShipAddress extends Component {
+
+    constructor(){
+        super();
+        this.state = {
+            address : []
+        }
+    }
+
+    getAddress = async() => {
+        const id = await AsyncStorage.getItem('userid')
+        console.log(id)
+        const config = {
+            headers: {
+                'x-access-token': 'Bearer ' + (await AsyncStorage.getItem('token')),
+            },
+        };
+        axios
+        .get(API_URL + '/address/' + id, config)
+        .then((data) => {
+            console.log(data.data.data)
+            this.setState({
+                address: data.data.data
+            })
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+    }
+    componentDidMount =() => {
+        this.getAddress()
+    }
+
+
     render() {
+        const {address} = this.state
         return (
-            <View style={{padding: 16}}>
+            <ScrollView style={{padding: 16}}>
                 <View style={styles.searchBar}>
                     <Image style={{marginTop: 10}} source={Search} />
                     <TextInput style={{marginLeft: 5}} placeholder="Search" />
@@ -14,21 +51,30 @@ export class ShipAddress extends Component {
                 <View style={{marginTop: 31}}>
                     <Text style={{fontSize: 16, fontWeight: 'bold'}}>Shipping Address</Text>
                 </View>
-                <TouchableOpacity style={styles.cardAddress}> 
-                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                        <Text>Fachri Ghiffary</Text>
-                        <TouchableOpacity >
-                            <Text style={{color: '#DB3022'}}>Change</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={{height: 42, width: 235, marginTop: 7}}>
-                        <Text>3 Newbridge Court Chino Hills, CA 91709, United States</Text>
-                    </View>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.btnAddAddress}>
+                {address && address.map(({name, address, address_dtl, city, post_code, phone_number}, index) => {
+                    return (
+                        <View style={styles.cardAddress} key={index}> 
+                            <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                                <Text>{name}</Text>
+                                <TouchableOpacity onPress={() => {
+                                    this.props.navigation.navigate('EditAddress')
+                                }}>
+                                    <Text style={{color: '#DB3022'}}>Change</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={{height: 42, width: 235, marginTop: 7}}>
+                                <Text>{address}</Text>
+                                <Text>{address_dtl}</Text>
+                            </View>
+                        </View>
+                    )
+                })}
+                <TouchableOpacity style={styles.btnAddAddress} onPress={() => {
+                    this.props.navigation.navigate('AddAddress')
+                }}>
                     <Text>Add New Address</Text>
                 </TouchableOpacity>
-            </View>
+            </ScrollView>
         )
     }
 }
@@ -62,7 +108,8 @@ const styles = StyleSheet.create({
         marginTop: 15,
         borderRadius: 24,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        marginBottom: 50
 
     }
 })

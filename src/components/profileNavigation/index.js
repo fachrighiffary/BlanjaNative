@@ -5,6 +5,8 @@ import Profile from '../profile';
 import MyOrder from '../profile/myOrder';
 import ShippingAddress from '../profile/shipAddress';
 import Setting from '../profile/setting';
+import EditAddress from '../profile/EditAddress';
+import AddAddress from '../profile/AddAddress';
 
 const Stack = createStackNavigator();
 
@@ -26,13 +28,23 @@ export class ProfileNavigation extends Component {
                 }}/>
                 <Stack.Screen 
                 name='ShippingAddress' 
-                component={ShippingAddress}/>
+                component={ShippingAddress}
+                />
+                <Stack.Screen 
+                name='EditAddress' 
+                component={EditAddress}
+                />
+                <Stack.Screen 
+                name='AddAddress' 
+                component={AddAddress}
+                />
                 <Stack.Screen 
                 name='Setting' 
                 component={Setting}
                 options={{
                 headerShown: false,
-                }}/>
+                }}
+                />
             </Stack.Navigator>
         )
     }

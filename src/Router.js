@@ -17,7 +17,7 @@ import Success from './components/bag/success';
 
 const Stack = createStackNavigator();
 
-const appRouter = () => {
+const Router = () => {
   return(
     <NavigationContainer>
       <Stack.Navigator>
@@ -76,4 +76,4 @@ const appRouter = () => {
   )
 }
 
-export default appRouter
+export default Router

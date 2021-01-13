@@ -8,15 +8,21 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import Product from '../../components/product';
 import DetailProd from '../../components/detailProduct'
 import axios from 'axios';
+import {API_URL} from "@env"
 
 export class DetailProduct extends Component {
     
-        state = {
+    constructor(){
+        super();
+        this.state = {
             size: 'Size',
             color: 'color',
             like: false,
-            product : []
+            product : [],
+
         }
+    }
+        
 
     getProduct = async() => {
         const id = this.props.route.params
@@ -25,11 +31,11 @@ export class DetailProduct extends Component {
               'x-access-token': 'Bearer ' + (await AsyncStorage.getItem('token')),
             },
           };
-        axios.get('http://10.0.2.2:8000/product/' + id, config)
+        axios.get(API_URL + '/product/' + id, config)
         .then((data) => {
-            //console.log(data)
+            //console.log(data.data.data)
             this.setState({
-                product: data
+                product: data.data.data
             })
         })
         .catch((err) => {
@@ -41,15 +47,16 @@ export class DetailProduct extends Component {
         this.getProduct();
     }
     
-    // componentDidUpdate = (prevProps) => {
+    // componentDidUpdate = (prevProps, prevState) => {
     //     if(prevProps.route.params !== this.props.route.params){
-    //         this.getProduct()
+    //         this.getProduct();
     //     }
     // }
 
     render() {
         const {product} = this.state
-        console.log(product)
+        //console.log(product)
+        //console.log(this.props.route.params)
         return (
             <ScrollView>
                <View style={styles.container}>
@@ -58,13 +65,14 @@ export class DetailProduct extends Component {
                    }}>
                         <Image source={IconBack}/>  
                    </TouchableOpacity>
-                   <Text style={styles.textTitle}>Short Dress</Text>
+                   <Text style={styles.textTitle}>Detail Product</Text>
                    <TouchableOpacity>
                         <Image source={Share} />
                    </TouchableOpacity>
                </View>
-               {product.data && product.data.data.map(({product_name, product_img, product_desc, product_condition,total_rating , product_price, product_qty, product_size, product_color, store_name}, index) => {
+               {product && product.map(({id, product_name, product_img, product_desc, product_condition,total_rating , product_price, product_qty, product_size, product_color, store_name}, index) => {
                         return <DetailProd 
+                        id = {id}
                         product_name={product_name}
                         product_img={product_img}
                         product_desc={product_desc}
@@ -84,7 +92,7 @@ export class DetailProduct extends Component {
                     <Text style={{fontSize: 18, fontWeight: '700'}}>You can also like this</Text>
                     <Text style={{fontSize: 11, color: 'grey'}} >12 items</Text>
                 </View>
-                <Product navigation={this.props.navigation}   status="Popular" url="?popular=desc"/>
+                <Product navigation={this.props.navigation}  status="Popular" url="?popular=desc"/>
             </ScrollView>
         )
     }

@@ -1,9 +1,30 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import React from 'react'
+import { useState } from 'react'
 import { View, Text, Image, StyleSheet } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
+import { set } from 'react-native-reanimated'
 import { Go, ImgProfile, Search } from '../../assets'
 
 const Profile = ({navigation}) => {
+
+    
+    const getData = async () => {
+        try {
+        const value = await AsyncStorage.getItem('token');
+        const userid = await AsyncStorage.getItem('userid');
+        const username = await AsyncStorage.getItem('username');
+        if (value !== null) {
+            // value previously stored
+            //console.log(value);
+            //console.log(userid);
+            console.log(username)
+        }
+        } catch (e) {
+        // error reading value
+        }
+    };
+
     return (
         <View style={{padding: 14}}>
             <View style={{width: '100%', alignItems: 'flex-end'}}>

@@ -1,83 +1,136 @@
-import React from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import React, { Component } from 'react'
 import { View, Text, Image, StyleSheet } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import { Product4, Search,IconBack } from '../../assets'
+import {API_URL} from "@env"
 
-const Bag = ({navigation}) => {
-    return (
-        <View style={{padding: 14}}>
-            <View style={{width: '100%', justifyContent: 'space-between', flexDirection: 'row', marginTop: 24}}>
-                <Image source={IconBack} />
-                <Image source={Search} />
-            </View>
-            <View style={{marginTop: 33}}>
-                <Text style={styles.titleScreen}>My Bag</Text>
-            </View>
-            <View style={{marginTop: 24}}>
-                <View style={styles.cardBag}>
-                    <View style={{position: 'absolute', flexDirection: 'row'}}>
-                        <Image style={styles.img} source={Product4} />
-                        <View style={{marginLeft: 11}}>
-                            <Text>T-Shirt</Text> 
-                            <View style={styles.dtlZiseCol}>
-                                <Text style={{fontSize: 11}}>Color : Grey</Text>
-                                <Text style={{fontSize: 11}}>Size : L</Text>
-                            </View>
-                            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                <View style={{flexDirection: 'row', width: 111, height: 36, marginTop: 14, justifyContent: 'space-between', alignItems: 'center'}}>
-                                    <TouchableOpacity>
-                                        <View style={{height: 36, width: 36, borderRadius: 18, borderColor: 'black', borderWidth: 1, justifyContent: 'center', alignItems: 'center'}}>
-                                            <Text style={{fontSize: 30, marginTop: -5}}>-</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                    <Text>1</Text>
-                                    <TouchableOpacity>
-                                        <View style={{height: 36, width: 36, borderRadius: 18, borderColor: 'black', borderWidth: 1, justifyContent: 'center', alignItems: 'center'}}>
-                                            <Text style={{fontSize: 30, marginTop: -5}}>+</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                </View>
-                                <View style={{marginLeft: 62}}>
-                                    <Text>Rp.100.000</Text>
-                                </View>
-                            </View>
+
+class Bag extends Component{
+
+    constructor(){
+        super();
+        this.state = {
+            transaction : []
+        }
+    }
+    
+
+    getTransaction = async() => {
+        const id = await AsyncStorage.getItem('userid')
+        const config = {
+            headers: {
+              'x-access-token': 'Bearer ' + (await AsyncStorage.getItem('token')),
+            },
+          };
+        axios
+        .get(API_URL + '/transaction/' + id, config)
+        .then((data) => {
+            console.log(data.data.data)
+            this.setState({
+                transaction: data.data.data
+            })
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+    }
+
+    componentDidMount = () => {
+        this.getTransaction();
+    }
+
+    render(){
+        const {transaction} = this.state
+        return(
+            <View style={{flex:1}}>
+                <View style={{height: 50, padding: 14,alignItems: 'flex-end', width: '100%'}}>
+                    <TouchableOpacity>
+                        <Image source={Search} />
+                    </TouchableOpacity>
+                </View>
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                    <ScrollView showsVerticalScrollIndicator={false}>
+                        <View>
+                            <Text style={styles.titleScreen}>My Bag</Text>
                         </View>
+                        {transaction && transaction.map(({product_name, size, color, quantity, price, status, product_img}, index) => {
+                             let httpImage =  { uri : 'http://192.168.1.3:8000' + product_img}
+                            return (
+                                <View style={styles.cardBag} key={index}>
+                                    <TouchableOpacity>
+                                        <Image style={styles.img} source={httpImage} />
+                                    </TouchableOpacity>
+                                    <View style={{marginLeft: 11}}>
+                                        <Text style={styles.txtBrand}>{product_name}</Text>
+                                        <View style={styles.containerSpec}>
+                                            <Text>Color : <Text>{color}</Text></Text>
+                                            <Text>Size : <Text>{size}</Text></Text>
+                                        </View>
+                                        <View style={{flexDirection: 'row', marginTop: 14, alignItems: 'center', width: '100%'}}>
+                                            <View style={{flexDirection: 'row', width: 130, alignItems: 'center'}}>
+                                                <TouchableOpacity style={styles.circle}>
+                                                    <Text>-</Text>
+                                                </TouchableOpacity>
+                                                <Text style={{paddingHorizontal: 16}}>{quantity}</Text>
+                                                <TouchableOpacity style={styles.circle}>
+                                                    <Text>+</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                            <View>
+                                                <Text>Rp. {price}</Text>
+                                            </View>
+                                        </View>
+                                    </View>
+                                </View>
+                            )
+                        })}
+                    </ScrollView>
+                </View>
+                <View style={styles.btmNav}>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-around', marginTop: 30}}>
+                        <Text>Total Amount : </Text>
+                        <Text>Rp.100.000</Text>
+                    </View>
+                    <View style={{alignItems:'center'}}>
+                        <TouchableOpacity style={styles.btnCheckout} onPress={() => {
+                            this.props.navigation.navigate('Checkout')
+                        }}>
+                            <Text style={{color: 'white'}}>CHECK OUT</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </View>
-            <View style={{ marginTop: 100, height: 155, width: '100%', bottom: -170}}>
-                <View style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between'
-                }}>
-                    <Text>Total Amount</Text>
-                    <Text>Rp.100,000</Text>
-                </View>
-                <TouchableOpacity onPress={() => {
-                    navigation.navigate('Checkout')
-                }}>
-                    <View style={styles.btnCheckout}>
-                        <Text style={{color: 'white'}}>CHECK OUT</Text>
-                    </View>
-                </TouchableOpacity>
-            </View>
-        </View>
-    )
+                
+        )
+    }
 }
 
 const styles = StyleSheet.create({
     titleScreen: {
         fontSize: 34,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        marginBottom: 24
     },
     cardBag : {
-        height: 104,
+        height: 104, 
         width: 343,
+        backgroundColor: 'white',
         borderRadius: 8,
-        position: 'relative'
-    },
-    imgCard: {
-        position: 'absolute'
+        marginBottom: 30,
+        alignSelf: 'center',
+        position: 'relative',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.32,
+        shadowRadius: 5.46,
+
+        elevation: 9,
+        flexDirection: 'row'
     },
     img : {
         width: 104,
@@ -98,8 +151,42 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 34,
+        marginTop: 14,
         alignSelf: 'center'
+    },
+    btmNav: {
+        backgroundColor: 'white',
+        borderTopLeftRadius: 15,
+        borderTopRightRadius: 15,
+        height: 130,
+        width: '100%', 
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 5,
+        },
+        shadowOpacity: 0.36,
+        shadowRadius: 6.68,
+
+        elevation: 11,
+    },
+    txtBrand : {
+        fontSize: 16,
+        fontWeight: '700',
+        marginTop: 5
+    },
+    containerSpec: {
+        flexDirection: 'row', 
+        width: 150, 
+        justifyContent: 'space-between'
+    },
+    circle: {
+        height: 36,
+        width: 36,
+        borderWidth: 1,
+        borderRadius: 18,
+        justifyContent: 'center',
+        alignItems:'center'
     }
 })
 

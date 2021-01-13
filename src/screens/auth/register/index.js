@@ -1,81 +1,106 @@
 import axios from 'axios'
 import { Input } from 'native-base'
-import React, {useState} from 'react'
+import React, {Component, useState} from 'react'
 import { View, Text, StyleSheet, Image } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { IconBack, IconNext } from '../../../assets'
 
-const Register = ({navigation}) => {
-   const [username, setusername] = useState('')
-   const [email, setemail] = useState('')
-   const [password, setpassword] = useState('')
-   const [level_id, setlevel_id] = useState(2)
+class Register extends Component{
 
-   const handleSubmit = () => {
-      const data = {
-          username,
-          email,
-          password,
-          level_id
-      }
-      console.log('data before send: ', data)
-      axios.post('http://10.0.2.2:8000/auth/register', data)
-      .then((res) => {
-          console.log(res)
-          navigation.navigate('Login')
-      })
-      .catch((err) => {
-          console.log(err)
-      })
-   }
 
-    return (
-        <View style={styles.container}>
-            <View style={styles.rowTitle}>
-                <Text style={styles.textTitle}>Sign Up</Text>
-            </View>
-            <View style={styles.containerForm}>
-                <View style={styles.input}>
-                    <Input 
-                    placeholder='Name'
-                    name="username" 
-                    value={username} onChangeText={(username) => setusername(username)} 
-                    />
+    constructor(){
+        super();
+        this.state = {
+            username: '',
+            email: '',
+            password:'',
+            errorForm: ''
+        }
+    }
+
+    handleSubmit = () => {
+        const data = {
+            username: this.state.username,
+            email:this.state.email,
+            password: this.state.password
+        }
+        if(this.state.username === '' || this.state.email === '' || this.state.password === '' ){
+            this.setState({
+                errorForm: 'Semua Kolom harus diisi'
+            })
+        }else{
+            axios
+            .post('http://192.168.1.3:8000/auth/register', data)
+            .then((data) => {
+                alert(data.data.data.msg)
+                this.props.navigation.replace('Login')
+            })
+            .catch((err) => {
+                this.setState({
+                    errorForm: 'Email Sudah terdaftar, Gunakan Email Lain'
+                })
+            })
+        }
+    }
+
+
+
+    render(){
+        let {email, username, password} = this.state
+        //console.log(this.state)
+        return(
+            <View style={styles.container}>
+                <View style={styles.rowTitle}>
+                    <Text style={styles.textTitle}>Sign Up</Text>
                 </View>
-                <View style={styles.input}>
-                    <Input 
-                    placeholder='Email' 
-                    name="email" 
-                    value={email} 
-                    onChangeText={(email) => setemail(email)}
-                    />
+                <View style={styles.containerForm}>
+                    <View style={styles.input}>
+                        <Input 
+                        placeholder='Name'
+                        value={username} 
+                        onChangeText={(text) => { this.setState({ username: text }) }} 
+                        />
+                    </View>
+                    <View style={styles.input}>
+                        <Input 
+                        placeholder='Email' 
+                        name="email" 
+                        value={email} 
+                        onChangeText={(text) => { this.setState({ email: text }) }} 
+                        />
+                    </View>
+                    <View style={styles.input}>
+                        <Input 
+                        secureTextEntry={true} 
+                        placeholder='Password'
+                        value={password} 
+                        onChangeText={(text) => { this.setState({ password: text }) }} 
+                        />
+                    </View>
                 </View>
-                <View style={styles.input}>
-                    <Input 
-                    secureTextEntry={true} 
-                    placeholder='Password'
-                    value={password} 
-                    name="password"
-                    onChangeText={(password) => setpassword(password)} 
-                    />
+                <View style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', marginTop: 16, marginRight: 10}}>
+                    <Text style={{fontSize: 14}}>Already have an account?</Text>
+                    <TouchableOpacity style={{marginLeft:7}} onPress={() => {
+                        this.props.navigation.replace('Login')
+                    }}>
+                        <Image source={IconNext} />
+                    </TouchableOpacity>
+                </View>
+                <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 40}}>
+                    <Text style={{color: 'red'}}>{this.state.errorForm}</Text>
+                </View>
+                <View style={{alignItems: 'center', marginTop: 32 }}>
+                    <TouchableOpacity style={styles.btnLogin} onPress={this.handleSubmit}>
+                        <Text style={{color: 'white'}}>Sign Up</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
-            <View style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', marginTop: 16, marginRight: 10}}>
-                <Text style={{fontSize: 14}}>Already have an account?</Text>
-                <TouchableOpacity style={{marginLeft:7}} onPress={() => {
-                    navigation.navigate('Login')
-                }}>
-                    <Image source={IconNext} />
-                </TouchableOpacity>
-            </View>
-            <View style={{alignItems: 'center', marginTop: 32 }}>
-                <TouchableOpacity style={styles.btnLogin} onPress={handleSubmit}>
-                    <Text style={{color: 'white'}}>Sign Up</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
-    )
+        )
+    }
 }
+
+
+
 
 const styles = StyleSheet.create({
     container : {

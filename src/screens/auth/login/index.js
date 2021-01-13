@@ -11,10 +11,12 @@ const getData = async () => {
     try {
       const value = await AsyncStorage.getItem('token');
       const userid = await AsyncStorage.getItem('userid');
+      const username = await AsyncStorage.getItem('username');
       if (value !== null) {
         // value previously stored
         console.log(value);
         console.log(userid);
+        console.log(username)
       }
     } catch (e) {
       // error reading value
@@ -32,14 +34,16 @@ const Login = ({navigation}) => {
           password
         };
         //console.log(data)
-        axios.post('http://10.0.2.2:8000/auth/login', data)
+        axios.post('http://192.168.1.3:8000/auth/login', data)
         .then(async (res) => {
-            //console.log(res.data.data)
+            console.log(res.data.data)
             const token = res.data.data.token;
+            const username = res.data.data.username
             const id = res.data.data.id;
             const userid = id.toString();
             await AsyncStorage.setItem('token', token);
             await AsyncStorage.setItem('userid', userid);
+            await AsyncStorage.setItem('username', username);
 
             navigation.replace('HomeScreen')
             //console.log(token);

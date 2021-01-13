@@ -8,82 +8,101 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import Product from '../../components/product';
 import axios from 'axios';
 import Rating from '../product/rating';
+import {API_URL} from "@env"
+
+
+//const img_product = this.props.product_img.split(',')[0]
 
 export class DetailProd extends Component {
     constructor(){
         super();
         this.state = {
-            size: 'Size',
-            color: 'color',
+            size: '',
+            color: '',
             like: false,
-            product : []
+            status : 'Unpaid',
+            quantity: 1
+           
         }
     }
+
+    handleSubmit = async() => {
+        const config = {
+            headers: {
+              'x-access-token': 'Bearer ' + (await AsyncStorage.getItem('token')),
+            },
+          };
+        const data = {
+            product_id : this.props.id,
+            product_img : this.props.product_img.split(',')[0],
+            user_id : await AsyncStorage.getItem('userid'),
+            color : this.state.color,
+            size : this.state.size,
+            price : this.props.product_price,
+            status: this.state.status,
+            quantity: this.state.quantity
+        }
+        console.log(data, config)
+
+        axios.post(API_URL + '/transaction', data, config)
+        .then((data) => {
+            //console.log(data)
+            this.props.navigation.navigate('Bag')
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+    }
+
     render() {
-        const {product_name, product_img, product_desc, total_rating, product_price, product_size, product_qty, store_name,product_condition, index} = this.props
-        let httpImage1 = { uri : 'http://10.0.2.2:8000' + product_img.split(',')[0]}
-        let httpImage2 = { uri : 'http://10.0.2.2:8000' + product_img.split(',')[1]}
-        let httpImage3 = { uri : 'http://10.0.2.2:8000' + product_img.split(',')[2]}
-        let httpImage4 = { uri : 'http://10.0.2.2:8000' + product_img.split(',')[3]}
-        let httpImage5 = { uri : 'http://10.0.2.2:8000' + product_img.split(',')[4]}
+        const {id, product_name, product_img, product_desc, total_rating, product_price, product_size, product_color, product_qty, store_name, product_condition, index} = this.props
+        const {size, color, imgProd} = this.state
+        //console.log(size, color, imgProd)
         return (
                 <View>
-                    <ScrollView  horizontal >
-                        <View style={{height: 413, width: 275, backgroundColor: 'grey', marginRight: 4, position: 'relative'}}>
-                            <Image style={{position: 'absolute', height: 413, width: 275,}} source={httpImage1} />
-                        </View>
-                        <View style={{height: 413, width: 275, backgroundColor: 'grey', marginRight: 4,position: 'relative'}}>
-                            <Image style={{position: 'absolute', height: 413, width: 275,}} source={httpImage2} />
-                        </View>
-                        <View style={{height: 413, width: 275, backgroundColor: 'grey', marginRight: 4,position: 'relative'}}>
-                            <Image style={{position: 'absolute', height: 413, width: 275,}} source={httpImage3} />
-                        </View>
-                        <View style={{height: 413, width: 275, backgroundColor: 'grey', marginRight: 4,position: 'relative'}}>
-                            <Image style={{position: 'absolute', height: 413, width: 275,}} source={httpImage4} />
-                        </View>
-                        <View style={{height: 413, width: 275, backgroundColor: 'grey', marginRight: 4,position: 'relative'}}>
-                            <Image style={{position: 'absolute', height: 413, width: 275,}} source={httpImage5} />
-                        </View>
+                    <ScrollView  horizontal>
+                        {product_img.split(',').map((result, index) => {
+                            let httpImage =  { uri : API_URL + result}
+                            return <View style={{height: 413, width: 275, backgroundColor: 'grey', marginRight: 4, position: 'relative'}} key={index}>
+                                        <Image style={{position: 'absolute', height: 413, width: 275,}} source={httpImage} />
+                                    </View>
+                        })}
                     </ScrollView>
 
                     {/* Dropdown */}
                     <View style={{paddingHorizontal: 16}}>
                         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                            <DropDownPicker
-                                    items={[
-                                        {label: 'Size', value: 'Size', hidden: true},
-                                        {label: 'M', value: 'm'},
-                                        {label: 'L', value: 'xl'},
-                                        {label: 'XL', value: 'xl'},
-                                    ]}
+                                <DropDownPicker
+                                   items={product_size.split(',').map((result) => {
+                                    return {label: result, value: result}
+                                   })}
                                     defaultValue={this.state.size}
                                     containerStyle={{height: 60}}
                                     style={{marginTop: 12, backgroundColor: 'white', height: 40, width: 138, borderColor: '#F01F0E' }}
                                     itemStyle={{
-                                        justifyContent: 'center'
+                                         justifyContent: 'center'
                                     }}
                                     dropDownStyle={{backgroundColor: '#fafafa'}}
                                     onChangeItem={item => this.setState({
                                         size: item.value
                                     })}
+                                    placeholder="Select Size"
                                 />
                                 <DropDownPicker
-                                    items={[
-                                        {label: 'color', value: 'color', hidden: true},
-                                        {label: 'Black', value: 'black'},
-                                        {label: 'Red', value: 'red'},
-                                        {label: 'Green', value: 'green'},
-                                    ]}
+                                   items={product_color.split(',').map((result) => {
+                                    return {label: result, value: result}
+                                   })}
                                     defaultValue={this.state.color}
                                     containerStyle={{height: 60}}
                                     style={{marginTop: 12, backgroundColor: 'white', height: 40, width: 138, borderColor: '#F01F0E' }}
                                     itemStyle={{
-                                        justifyContent: 'center'
+                                         justifyContent: 'center'
                                     }}
                                     dropDownStyle={{backgroundColor: '#fafafa'}}
                                     onChangeItem={item => this.setState({
                                         color: item.value
                                     })}
+                                    placeholder="Select Color"
                                 />
                                 <TouchableOpacity onPress={() => {
                                         this.setState({
@@ -108,9 +127,7 @@ export class DetailProd extends Component {
                             </View>
                         </View>
                         <View style={{height: 112, width: '100%', backgroundColor: 'white', marginTop: 20, justifyContent: 'center', alignItems: 'center'}}>
-                            <TouchableOpacity onPress={() => {
-                                this.props.navigation.navigate('Bag')
-                            }}>
+                            <TouchableOpacity onPress={this.handleSubmit}>
                                 <View style={{height: 48, width: 343, borderRadius: 25, backgroundColor: '#DB3022',justifyContent: 'center', alignItems: 'center'}}>
                                     <Text style={{color: 'white'}}>ADD TO CART</Text>
                                 </View>

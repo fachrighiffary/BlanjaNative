@@ -10,6 +10,7 @@ import Home from '../home'
 import Profile from '../profile'
 import Shop from '../shop'
 import ProfileNavigation from '../profileNavigation';
+import ShopStackScreen from '../shopStackScreen';
 
 const Tab = createBottomTabNavigator()
 
@@ -32,8 +33,8 @@ const TabNavigator = () => {
               }}
              />
             <Tab.Screen 
-            name="Shop" 
-            component={Shop}
+            name="ShopStackScreen" 
+            component={ShopStackScreen}
             options={{
                 tabBarLabel: 'Shop',
                 tabBarIcon: ({ color, size }) => (

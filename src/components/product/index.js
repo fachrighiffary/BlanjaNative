@@ -4,6 +4,7 @@ import { Text, View, StyleSheet, Image } from 'react-native'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import { Image1, Product1, Star0 } from '../../assets'
 import Rating from './rating'
+import {API_URL} from "@env"
 
 const Product = ({status, navigation, url}) => {
 
@@ -15,7 +16,7 @@ const Product = ({status, navigation, url}) => {
 
     const getData = () => {
         axios
-        .get('http://10.0.2.2:8000/products' + url)
+        .get(API_URL + '/products' + url)
         .then(res => {
             //console.log(res.data.data.products)
             setProducts(res.data.data.products)
@@ -32,8 +33,8 @@ const Product = ({status, navigation, url}) => {
     return(
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{marginTop: 22}}>
                 {product && product.map(
-                    ({product_name, product_img, product_price, store_name, total_rating, id}, index ) => {
-                        let httpImage = { uri : 'http://10.0.2.2:8000' + product_img.split(',')[0]}
+                    ({product_name, product_color, product_size, product_img, product_price, store_name, total_rating, id}, index ) => {
+                        let httpImage = { uri : API_URL + product_img.split(',')[0]}
                         return (
                             <TouchableOpacity style={styles.card}  onPress={() => {
                                 goToDetail(id)

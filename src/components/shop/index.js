@@ -13,7 +13,7 @@ const Shop = ({navigation}) => {
                 }}>
                     <Image source={IconBack} />
                 </TouchableOpacity>
-                <Text>Categories</Text>
+                <Text style={{fontSize: 18, fontWeight: '800'}}>Categories</Text>
                 <TouchableOpacity>
                     <Image source={Search} />
                 </TouchableOpacity>
