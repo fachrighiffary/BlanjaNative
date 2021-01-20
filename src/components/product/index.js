@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react'
 import { Text, View, StyleSheet, Image } from 'react-native'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import { Image1, Product1, Star0 } from '../../assets'
-import Rating from './rating'
+import RatingProduct from './rating'
 import {API_URL} from "@env"
 
 const Product = ({status, navigation, url}) => {
@@ -26,7 +26,7 @@ const Product = ({status, navigation, url}) => {
         })
     }
     const goToDetail = (id) => {
-        navigation.navigate('Detail', id)
+        navigation.push('Detail', id)
 
     }
 
@@ -54,7 +54,7 @@ const Product = ({status, navigation, url}) => {
                                 </View>
                                 
                                 {/* Rating Star */}
-                                <Rating total_rating={Math.round(total_rating)} />
+                                <RatingProduct total_rating={Math.round(total_rating)} />
                                 <View style={{marginTop: 7}}>
                                     <Text style={{color: '#9B9B9B'}}>{store_name}</Text>
                                 </View>
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
         height: 300, 
         width: 148,
         marginRight:20, 
-        marginLeft: 20
+        marginLeft: 20,                       
     }
 })
 

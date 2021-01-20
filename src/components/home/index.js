@@ -1,7 +1,8 @@
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import { Image1 } from '../../assets';
+import Icon from 'react-native-vector-icons/Feather'
+import { Bell, Image1 } from '../../assets';
 import Product from '../product';
 
 const Home = ({navigation, route}) => {
@@ -11,6 +12,11 @@ const Home = ({navigation, route}) => {
             <View style={styles.header}>
                 <Image source={Image1} style={styles.imgHeader}/>
                 <Text style={styles.txtImg}>Street Clotes</Text>
+                <View style={styles.contBell}>
+                    <TouchableOpacity>
+                        <Image source={Bell} />
+                    </TouchableOpacity>
+                </View>
             </View>
             <View style={styles.titleText}>
                 <View style={{marginTop: 31}}>
@@ -80,6 +86,15 @@ const styles = StyleSheet.create({
         width: 148,
         marginRight:20, 
         marginLeft: 20
+    },
+    contBell : {
+        height: 36,
+        width: 35,
+        //backgroundColor: '#FFFFFF',
+        borderRadius: 10,
+        position: 'absolute',
+        right: 23,
+        bottom: 94,
     }
 })
 

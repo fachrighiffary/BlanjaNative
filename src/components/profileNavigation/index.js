@@ -7,6 +7,10 @@ import ShippingAddress from '../profile/shipAddress';
 import Setting from '../profile/setting';
 import EditAddress from '../profile/EditAddress';
 import AddAddress from '../profile/AddAddress';
+import MyProduct from '../profile/product/MyProduct';
+import AddProduct from '../profile/product/AddProduct';
+import EditProduct from '../profile/product/EditProduct';
+import { connect } from 'react-redux';
 
 const Stack = createStackNavigator();
 
@@ -45,9 +49,38 @@ export class ProfileNavigation extends Component {
                 headerShown: false,
                 }}
                 />
+                 <Stack.Screen 
+                name='MyProduct' 
+                component={MyProduct}
+                options={{
+                headerShown: false,
+                }}
+                />
+                <Stack.Screen 
+                name='AddProduct' 
+                component={AddProduct}
+                options={{
+                headerShown: false,
+                }}
+                />
+                <Stack.Screen 
+                name='EditProduct' 
+                component={EditProduct}
+                options={{
+                headerShown: false,
+                }}
+                />
             </Stack.Navigator>
         )
     }
 }
 
-export default ProfileNavigation
+
+const mapStateToProps = ({auth}) => {
+    return {
+        auth
+    }
+}
+
+
+export default connect(mapStateToProps)(ProfileNavigation)

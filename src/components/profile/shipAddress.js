@@ -8,8 +8,8 @@ import {API_URL} from "@env"
 
 export class ShipAddress extends Component {
 
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state = {
             address : []
         }
@@ -17,7 +17,7 @@ export class ShipAddress extends Component {
 
     getAddress = async() => {
         const id = await AsyncStorage.getItem('userid')
-        console.log(id)
+        //console.log(id)
         const config = {
             headers: {
                 'x-access-token': 'Bearer ' + (await AsyncStorage.getItem('token')),
@@ -39,8 +39,30 @@ export class ShipAddress extends Component {
         this.getAddress()
     }
 
+    goToEditAddres = (id) => {
+        this.props.navigation.navigate('EditAddress', id)
+    }
+    
+    handleDelete = async(id) => {
+        const config = {
+            headers: {
+                'x-access-token': 'Bearer ' + (await AsyncStorage.getItem('token')),
+            },
+        };
+        axios
+        .delete(API_URL + '/address/' + id, config)
+        .then((data) => {
+            console.log(data)
+            this.getAddress()
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+    }
+
 
     render() {
+        console.log(API_URL)
         const {address} = this.state
         return (
             <ScrollView style={{padding: 16}}>
@@ -51,20 +73,29 @@ export class ShipAddress extends Component {
                 <View style={{marginTop: 31}}>
                     <Text style={{fontSize: 16, fontWeight: 'bold'}}>Shipping Address</Text>
                 </View>
-                {address && address.map(({name, address, address_dtl, city, post_code, phone_number}, index) => {
+                {address && address.map(({id, name, address, address_dtl, city, post_code, phone_number}, index) => {
                     return (
                         <View style={styles.cardAddress} key={index}> 
                             <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                                 <Text>{name}</Text>
-                                <TouchableOpacity onPress={() => {
-                                    this.props.navigation.navigate('EditAddress')
-                                }}>
-                                    <Text style={{color: '#DB3022'}}>Change</Text>
-                                </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => {
+                                        this.goToEditAddres(id)
+                                    }}>
+                                        <Text style={{color: '#DB3022'}}>Change</Text>
+                                    </TouchableOpacity>
                             </View>
-                            <View style={{height: 42, width: 235, marginTop: 7}}>
-                                <Text>{address}</Text>
-                                <Text>{address_dtl}</Text>
+                            <View style={{height: 42, marginTop: 7, justifyContent: 'space-between', flexDirection: 'row'}}>
+                                <View style={{width: 220}}>
+                                    <Text>{address_dtl}</Text>
+                                    <Text>{address}</Text>
+                                </View>
+                                <View>
+                                <TouchableOpacity onPress={() => {
+                                    this.handleDelete(id)
+                                }}>
+                                        <Text style={{color: '#DB3022'}}>Delete</Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                         </View>
                     )

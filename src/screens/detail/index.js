@@ -9,6 +9,7 @@ import Product from '../../components/product';
 import DetailProd from '../../components/detailProduct'
 import axios from 'axios';
 import {API_URL} from "@env"
+import { connect } from 'react-redux';
 
 export class DetailProduct extends Component {
     
@@ -25,38 +26,36 @@ export class DetailProduct extends Component {
         
 
     getProduct = async() => {
-        const id = this.props.route.params
-        const config = {
-            headers: {
-              'x-access-token': 'Bearer ' + (await AsyncStorage.getItem('token')),
-            },
-          };
-        axios.get(API_URL + '/product/' + id, config)
-        .then((data) => {
-            //console.log(data.data.data)
-            this.setState({
-                product: data.data.data
+        if(!this.props.auth.isLogin){
+            this.props.navigation.navigate('Login')
+        }else{
+            const id = this.props.route.params
+            const config = {
+                headers: {
+                  'x-access-token': 'Bearer ' + this.props.auth.token,
+                },
+              };
+            axios.get(API_URL + '/product/' + id, config)
+            .then((data) => {
+                //console.log(data.data.data)
+                this.setState({
+                    product: data.data.data
+                })
             })
-        })
-        .catch((err) => {
-            console.log(err)
-        })
+            .catch((err) => {
+                console.log(err)
+            })
+        }
     }
 
     componentDidMount = () => {
         this.getProduct();
     }
     
-    // componentDidUpdate = (prevProps, prevState) => {
-    //     if(prevProps.route.params !== this.props.route.params){
-    //         this.getProduct();
-    //     }
-    // }
 
     render() {
+        //console.log('ini adalah auth props di detail', this.props.auth)
         const {product} = this.state
-        //console.log(product)
-        //console.log(this.props.route.params)
         return (
             <ScrollView>
                <View style={styles.container}>
@@ -112,4 +111,10 @@ const styles = StyleSheet.create({
     }
 })
 
-export default DetailProduct
+const mapStateToProps = ({auth}) => {
+    return {
+        auth
+    }
+}
+
+export default connect(mapStateToProps)(DetailProduct);

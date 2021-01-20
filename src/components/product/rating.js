@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Image, Text, View } from 'react-native'
 import { Star, Star0 } from '../../assets'
 
-export class Rating extends Component {
+export class RatingProduct extends Component {
     render() {
         const {total_rating} = this.props
         // console.log(total_rating)
@@ -19,7 +19,7 @@ export class Rating extends Component {
                 <Image source={Star0} />
                 <Image source={Star0} />
                 <Image source={Star0} /> */}
-                {lop.map((data, id) => {
+                {lop.map((id) => {
                         return <Image source={Star} key={id}/>
                     })}
                 <Text style={{fontSize: 10, marginLeft: 3, color:'#9B9B9B'}}>({total_rating})</Text>
@@ -28,4 +28,4 @@ export class Rating extends Component {
     }
 }
 
-export default Rating
+export default RatingProduct

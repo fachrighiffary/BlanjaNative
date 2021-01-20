@@ -11,28 +11,16 @@ import Profile from '../profile'
 import Shop from '../shop'
 import ProfileNavigation from '../profileNavigation';
 import ShopStackScreen from '../shopStackScreen';
+import { connect } from 'react-redux';
 
 const Tab = createBottomTabNavigator()
 
-const TabNavigator = () => {
-    return (
-        <Tab.Navigator
-        initialRouteName="Home"
-        tabBarOptions={{
-            activeTintColor: '#e91e63',
-        }}
-        >
-            <Tab.Screen 
-            name="Home" 
-            component={Home}
-            options={{
-                tabBarLabel: 'Home',
-                tabBarIcon: ({ color, size }) => (
-                  <Icon name="home" color={color} size={size} />
-                ),
-              }}
-             />
-            <Tab.Screen 
+const TabNavigator = (props) => {
+    let componentTabNavigator
+    if(props.level == 2) {
+      componentTabNavigator = 
+      <>
+        <Tab.Screen 
             name="ShopStackScreen" 
             component={ShopStackScreen}
             options={{
@@ -53,6 +41,32 @@ const TabNavigator = () => {
                 ),
               }} 
             />
+      </>
+    }else{
+      componentTabNavigator = 
+      <>
+      </>
+    }
+    return (
+            <Tab.Navigator
+            initialRouteName="Home"
+            tabBarOptions={{
+                activeTintColor: '#e91e63',
+            }}
+            >
+            <Tab.Screen 
+            name="Home" 
+            component={Home}
+            options={{
+                tabBarLabel: 'Home',
+                tabBarIcon: ({ color, size }) => (
+                  <Icon name="home" color={color} size={size} />
+                ),
+              }}
+             />
+            
+              {componentTabNavigator}
+
             <Tab.Screen 
             name="Favorites"
             component={Favorites} 
@@ -77,4 +91,10 @@ const TabNavigator = () => {
     )
 }
 
-export default TabNavigator
+const mapStateToProps = ({auth}) => {
+  return (
+    auth
+  )
+}
+
+export default connect(mapStateToProps)(TabNavigator)

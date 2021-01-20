@@ -1,33 +1,35 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_URL } from "@env";
 import axios from 'axios';
-import React, { Component } from 'react'
-import { View, Text, Image, StyleSheet } from 'react-native'
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
-import { Product4, Search,IconBack } from '../../assets'
-import {API_URL} from "@env"
+import React, { Component } from 'react';
+import { Image, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { connect } from 'react-redux';
+import { Search } from '../../assets';
 
 
 class Bag extends Component{
 
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state = {
-            transaction : []
+            transaction : [],
+            plus: '',
+            mines: ''
         }
     }
     
 
-    getTransaction = async() => {
-        const id = await AsyncStorage.getItem('userid')
+    getTransaction = () => {
+        const id = this.props.auth.id
         const config = {
             headers: {
-              'x-access-token': 'Bearer ' + (await AsyncStorage.getItem('token')),
+              'x-access-token': 'Bearer ' + this.props.auth.token,
             },
           };
         axios
         .get(API_URL + '/transaction/' + id, config)
         .then((data) => {
-            console.log(data.data.data)
+            //console.log(data.data.data)
             this.setState({
                 transaction: data.data.data
             })
@@ -39,6 +41,11 @@ class Bag extends Component{
 
     componentDidMount = () => {
         this.getTransaction();
+        this._unsubscribe = this.props.navigation.addListener('focus', () => {
+            if(!this.props.auth.isLogin){
+                this.props.navigation.navigate('Login')
+            }
+        });
     }
 
     render(){
@@ -56,7 +63,7 @@ class Bag extends Component{
                             <Text style={styles.titleScreen}>My Bag</Text>
                         </View>
                         {transaction && transaction.map(({product_name, size, color, quantity, price, status, product_img}, index) => {
-                             let httpImage =  { uri : 'http://192.168.1.3:8000' + product_img}
+                             let httpImage =  { uri : API_URL + product_img}
                             return (
                                 <View style={styles.cardBag} key={index}>
                                     <TouchableOpacity>
@@ -190,4 +197,11 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Bag
+const mapStateToProps = ({auth}) => {
+    return {
+        auth
+    }
+}
+
+
+export default connect(mapStateToProps)(Bag)

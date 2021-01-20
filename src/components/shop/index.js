@@ -14,7 +14,9 @@ const Shop = ({navigation}) => {
                     <Image source={IconBack} />
                 </TouchableOpacity>
                 <Text style={{fontSize: 18, fontWeight: '800'}}>Categories</Text>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => {
+                    navigation.navigate('SearchProduct')
+                }}>
                     <Image source={Search} />
                 </TouchableOpacity>
             </View>

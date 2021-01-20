@@ -13,6 +13,7 @@ import DetailProduct from './screens/detail';
 import Checkout from './components/bag/checkout';
 import ShippingAddress from './components/bag/shipaddress';
 import Success from './components/bag/success';
+import RatingReview from './components/ratingReview';
 
 
 const Stack = createStackNavigator();
@@ -68,6 +69,12 @@ const Router = () => {
        <Stack.Screen
         name="Success"
         component={Success}
+        options = {{
+          headerShown :false
+        }} />
+         <Stack.Screen
+        name="RatingReview"
+        component={RatingReview}
         options = {{
           headerShown :false
         }} />

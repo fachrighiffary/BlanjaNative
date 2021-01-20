@@ -12,6 +12,9 @@ import Gopay from './icon/gopay.png'
 import Filter from './icon/filter.png'
 import Block from './icon/block.png'
 import Sort from './icon/sort.png'
+import Bell from './icon/bell.png'
+import IconCamera from './icon/camera.png'
+import IconGalery from './icon/gelery.png'
 
 import Image1 from './image/home1.jpg'
 import Product1 from './image/product1.png'
@@ -61,5 +64,8 @@ export {
     Tshirt,
     Filter,
     Block,
-    Sort
+    Sort,
+    Bell,
+    IconCamera,
+    IconGalery
 };

@@ -4,7 +4,8 @@ import React, {Component, useState} from 'react'
 import { View, Text, StyleSheet, Image } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { IconBack, IconNext } from '../../../assets'
-
+import {API_URL} from "@env"
+ 
 class Register extends Component{
 
 
@@ -30,7 +31,7 @@ class Register extends Component{
             })
         }else{
             axios
-            .post('http://192.168.1.3:8000/auth/register', data)
+            .post(API_URL + '/auth/register', data)
             .then((data) => {
                 alert(data.data.data.msg)
                 this.props.navigation.replace('Login')
@@ -47,6 +48,7 @@ class Register extends Component{
 
     render(){
         let {email, username, password} = this.state
+        
         //console.log(this.state)
         return(
             <View style={styles.container}>

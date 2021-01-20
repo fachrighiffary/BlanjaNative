@@ -1,14 +1,13 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { Component } from 'react'
-import { Image, StyleSheet, Text, View } from 'react-native'
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
-import { IconBack, Product2, Product3, Share, Star } from '../../assets'
-import Icon from 'react-native-vector-icons/Fontisto';
-import DropDownPicker from 'react-native-dropdown-picker';
-import Product from '../../components/product';
+import { API_URL } from "@env";
 import axios from 'axios';
-import Rating from '../product/rating';
-import {API_URL} from "@env"
+import React, { Component } from 'react';
+import { Image, StyleSheet, Text, View } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/Fontisto';
+import { connect } from 'react-redux';
+import { Go } from '../../assets';
+import RatingProduct from '../product/rating';
 
 
 //const img_product = this.props.product_img.split(',')[0]
@@ -29,13 +28,13 @@ export class DetailProd extends Component {
     handleSubmit = async() => {
         const config = {
             headers: {
-              'x-access-token': 'Bearer ' + (await AsyncStorage.getItem('token')),
+              'x-access-token': 'Bearer ' + this.props.auth.token,
             },
           };
         const data = {
             product_id : this.props.id,
             product_img : this.props.product_img.split(',')[0],
-            user_id : await AsyncStorage.getItem('userid'),
+            user_id : this.props.auth.id,
             color : this.state.color,
             size : this.state.size,
             price : this.props.product_price,
@@ -52,6 +51,10 @@ export class DetailProd extends Component {
         .catch((err) => {
             console.log(err)
         })
+    }
+
+    goToReview = (id, total_rating) => {
+        this.props.navigation.navigate('RatingReview',[id, total_rating])
     }
 
     render() {
@@ -121,7 +124,7 @@ export class DetailProd extends Component {
                                 </View>
                                 <Text style={{fontSize : 24, fontWeight: 'bold'}}>Rp.{product_price}</Text>
                             </View>
-                            <Rating total_rating={Math.round(total_rating)} />
+                            <RatingProduct total_rating={Math.round(total_rating)} />
                             <View >
                                 <Text>{product_desc}.</Text>
                             </View>
@@ -133,9 +136,44 @@ export class DetailProd extends Component {
                                 </View>
                             </TouchableOpacity>
                         </View>
+                        <View style={{borderWidth: 1}}></View>
+                        <TouchableOpacity style={styles.detailDtl}>
+                            <Text>Shipping Info</Text>
+                            <Image source={Go} />
+                        </TouchableOpacity>
+
+                        <View style={{borderWidth: 1}}></View>
+                        <TouchableOpacity style={styles.detailDtl}>
+                            <Text>Support</Text>
+                            <Image source={Go} />
+                        </TouchableOpacity>
+                        
+                        <View style={{borderWidth: 1}}></View>
+                        <TouchableOpacity style={styles.detailDtl} onPress={() => {
+                            this.goToReview(id, total_rating)
+                        }}>
+                            <Text>Rating & Review</Text>
+                            <Image source={Go} />
+                        </TouchableOpacity>
+                        <View style={{borderWidth: 1}}></View>
                 </View>
         )
     }
 }
 
-export default DetailProd
+const styles = StyleSheet.create({
+    detailDtl : {
+        padding: 16, 
+        justifyContent: 'space-between', 
+        flexDirection: 'row'
+    }
+})
+
+
+const mapStateToProps = ({auth}) => {
+    return(
+        auth
+    )
+}
+
+export default connect(mapStateToProps)(DetailProd) 

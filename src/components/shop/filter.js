@@ -2,31 +2,35 @@ import axios from 'axios'
 import React, { Component } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import { Block, Filter, IconBack, Product4, Search, Sort } from '../../assets';
-import Rating, { RatingProduct } from '../product/rating';
+import { Block, Filter, IconBack, Product1, Product4, Search, Sort } from '../../assets';
+import { RatingProduct } from '../product/rating';
 import {API_URL} from "@env"
 
-export class Category extends Component {
-    
+export class FilterData extends Component {
+
     constructor(){
         super();
         this.state = {
-            product :  []
+            product :  [],
+            errMsg: ''
         }
     }
 
     handleGetPproduct = () => {
         const params = this.props.route.params.url
         axios
-        .get(API_URL + '/search' + params)
+        .get(API_URL + '/search/sort' + params)
         .then((data) => {
-            //console.log(data.data.data)
+            console.log(data.data.data)
             this.setState({
                 product: data.data.data
             })
         })
         .catch((err) => {
             console.log(err)
+            this.setState({
+                errMsg: 'Data Tidak Ditemukan'
+            })
         })
     }
     componentDidMount =() => {
@@ -41,11 +45,10 @@ export class Category extends Component {
     goToSearch = () => {
         this.props.navigation.navigate('SearchProduct')
     }
-
     render() {
         //console.log(this.props.route)
         const {title} = this.props.route.params
-        const {product} = this.state
+        const {product, errMsg} = this.state
         return (
             <View>
 
@@ -91,6 +94,9 @@ export class Category extends Component {
 
                 {/* product */}
                 <ScrollView style={{marginTop: 18, marginBottom: 18}}>
+                    <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                        <Text style={{fontSize: 20}}>{errMsg}</Text>
+                    </View>
                     {product && product.map(({id, product_name, store_name, total_rating, product_price, product_img}, index) => {
                         let httpImage = { uri : API_URL + product_img.split(',')[0]}
                         return (
@@ -145,4 +151,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Category
+export default FilterData

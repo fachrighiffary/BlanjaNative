@@ -4,60 +4,86 @@ import { Input } from 'native-base'
 import React, { Component, useState } from 'react'
 import { View, Text, StyleSheet, Image, KeyboardAvoidingView } from 'react-native'
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler'
+import { connect } from 'react-redux';
 import { IconBack, IconNext } from '../../../assets'
+import { setLoginTrue } from '../../../public/redux/ActionCreators/Auth'
+import { API_URL } from "@env"
 
+// const getData = async () => {
+//     try {
+//       const value = await AsyncStorage.getItem('token');
+//       const userid = await AsyncStorage.getItem('userid');
+//       const username = await AsyncStorage.getItem('username');
+//       if (value !== null) {
+//         // value previously stored
+//         console.log(value);
+//         console.log(userid);
+//         console.log(username)
+//       }
+//     } catch (e) {
+//       // error reading value
+//     }
+//   };
 
-const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('token');
-      const userid = await AsyncStorage.getItem('userid');
-      const username = await AsyncStorage.getItem('username');
-      if (value !== null) {
-        // value previously stored
-        console.log(value);
-        console.log(userid);
-        console.log(username)
-      }
-    } catch (e) {
-      // error reading value
-    }
-  };
+class Login extends Component{
 
-const Login = ({navigation}) => {
-
-    const [email, setemail] = useState('')
-    const [password, setpassword] = useState('')
-
-    const handleSubmit = () => {
-        const data = {
-          email,
-          password
-        };
-        //console.log(data)
-        axios.post('http://192.168.1.3:8000/auth/login', data)
-        .then(async (res) => {
-            console.log(res.data.data)
-            const token = res.data.data.token;
-            const username = res.data.data.username
-            const id = res.data.data.id;
-            const userid = id.toString();
-            await AsyncStorage.setItem('token', token);
-            await AsyncStorage.setItem('userid', userid);
-            await AsyncStorage.setItem('username', username);
-
-            navigation.replace('HomeScreen')
-            //console.log(token);
-            await getData();
-        })
-        .catch((err) => {
-            console.log(err)
-        })
+    constructor(){
+        super();
+        this.state = {
+            email: '',
+            password: '',
+            errMsg: ''
+        }
     }
 
-    return (
+    handleSubmit = () => {
+        if(this.state.email === '' || this.state.password === ''){
+            this.setState({
+                errMsg: 'Email atau password tidak boleh kosong'
+            })
+        }else{
+            const data = {
+              email : this.state.email,
+              password : this.state.password
+            };
+            //console.log(data)
+            axios.post(API_URL + '/auth/login', data)
+            .then(async (res) => {
+                // console.log(res.data.data)
+                // const token = res.data.data.token;
+                // const username = res.data.data.username
+                // const id = res.data.data.id;
+                // const userid = id.toString();
+                // await AsyncStorage.setItem('token', token);
+                // await AsyncStorage.setItem('userid', userid);
+                // await AsyncStorage.setItem('username', username);
+                const dataLogin = {
+                    name:res.data.data.username,
+                    email:res.data.data.email,
+                    level:res.data.data.level,
+                    id:res.data.data.id,
+                    token:res.data.data.token
+                }
+                console.log(dataLogin)
+                this.props.dispatch(setLoginTrue(dataLogin))
+                this.props.navigation.replace('HomeScreen')
+                //console.log(token);
+                // await getData();
+            })
+            .catch((err) => {
+                this.setState({
+                    errMsg : 'Email / password Salah'
+                })
+            })
+        }
+    }
+
+    render() {
+        //console.log(this.props.auth)
+        return(
             <KeyboardAvoidingView style={styles.container}>
                 <TouchableOpacity onPress={ () => {
-                    navigation.goBack();
+                    this.props.navigation.navigate('Register');
                 }}>
                     <Image source={IconBack} />
                 </TouchableOpacity>
@@ -69,34 +95,39 @@ const Login = ({navigation}) => {
                         <Input 
                             placeholder='Email'
                             name="email" 
-                            value={email} onChangeText={(email) => setemail(email)}
+                            onChangeText={(text) => { this.setState({ email: text }) }} 
                         />
                     </View>
                     <View style={styles.input}>
                         <Input 
                             placeholder='Password' 
                             secureTextEntry={true}
-                            value={password} 
                             name="password" 
-                            onChangeText={(password) => setpassword(password)} 
+                            onChangeText={(text) => { this.setState({ password: text }) }} 
                         />
                     </View>
                 </View>
                 <View style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', marginTop: 16, marginRight: 10}}>
                     <Text style={{fontSize: 14}}>Forgot your password?</Text>
                     <TouchableOpacity style={{marginLeft:7}} onPress={() => {
-                        navigation.navigate('ForgotPassword')
+                        this.props.navigation.navigate('ForgotPassword')
                     }}>
                         <Image source={IconNext} />
                     </TouchableOpacity>
                 </View>
                 <View style={{alignItems: 'center', marginTop: 32 }}>
-                    <TouchableOpacity style={styles.btnLogin} onPress={handleSubmit}>
-                        <Text style={{color: 'white'}}>LOGIN</Text>
-                    </TouchableOpacity>
+                    <View>
+                        <Text style={{color: 'red'}}>{this.state.errMsg}</Text>
+                    </View>
+                    <View>
+                        <TouchableOpacity style={styles.btnLogin} onPress={this.handleSubmit}>
+                            <Text style={{color: 'white'}}>LOGIN</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </KeyboardAvoidingView>
-    )
+        )
+    }
 }
 
 const styles = StyleSheet.create({
@@ -139,4 +170,14 @@ const styles = StyleSheet.create({
 
 })
 
-export default Login
+const mapStateToProps = ({auth}) => {
+    return {
+        auth
+    }
+}
+export default connect(mapStateToProps)(Login)
+
+
+
+
+
