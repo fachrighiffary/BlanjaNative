@@ -32,19 +32,25 @@ class Login extends Component{
         this.state = {
             email: '',
             password: '',
-            errMsg: ''
+            level: '',
+            errMsg: '',
+            backColorsell: '',
+            textColorsell: 'white',
+            backColorsCus: '',
+            textColorsCus: 'white',
         }
     }
 
     handleSubmit = () => {
-        if(this.state.email === '' || this.state.password === ''){
+        if(this.state.email === '' || this.state.password === '' || this.state.level === ''){
             this.setState({
-                errMsg: 'Email atau password tidak boleh kosong'
+                errMsg: 'Email atau password tidak boleh kosong \n Seller / Costumer harus dipilih'
             })
         }else{
             const data = {
               email : this.state.email,
-              password : this.state.password
+              password : this.state.password,
+              level_id : this.state.level
             };
             //console.log(data)
             axios.post(API_URL + '/auth/login', data)
@@ -79,7 +85,7 @@ class Login extends Component{
     }
 
     render() {
-        //console.log(this.props.auth)
+        console.log(this.state.level)
         return(
             <KeyboardAvoidingView style={styles.container}>
                 <TouchableOpacity onPress={ () => {
@@ -89,6 +95,31 @@ class Login extends Component{
                 </TouchableOpacity>
                 <View style={styles.rowTitle}>
                     <Text style={styles.textTitle}>Login</Text>
+                    <View style={{height:70, width: 100, backgroundColor:'red', justifyContent: 'space-between', alignItems: 'center', borderRadius: 10}}>
+                        <TouchableOpacity style={{backgroundColor:this.state.backColorsCus, height: 35, width: 100, borderTopLeftRadius: 10, borderTopRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} onPress={() => {
+                            this.setState({
+                                level: 2,
+                                backColorsCus: 'white',
+                                textColorsCus:'red',
+                                textColorsell: 'white',
+                                backColorsell: 'red'
+                               
+                            })
+                        }}>
+                            <Text  style={{color: this.state.textColorsCus}}>Customer</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{backgroundColor:this.state.backColorsell, height: 35, width: 100, borderBottomLeftRadius: 10, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} onPress={() => {
+                            this.setState({
+                                level: 1,
+                                textColorsell: 'red',
+                                backColorsell: 'white',
+                                backColorsCus: 'red',
+                                textColorsCus:'white'
+                            })
+                        }}>
+                            <Text style={{color: this.state.textColorsell}}>Seller</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
                 <View style={styles.containerForm}>
                     <View style={styles.input}>
@@ -117,7 +148,7 @@ class Login extends Component{
                 </View>
                 <View style={{alignItems: 'center', marginTop: 32 }}>
                     <View>
-                        <Text style={{color: 'red'}}>{this.state.errMsg}</Text>
+                        <Text style={{color: 'red', textAlign: 'center'}}>{this.state.errMsg}</Text>
                     </View>
                     <View>
                         <TouchableOpacity style={styles.btnLogin} onPress={this.handleSubmit}>
@@ -140,7 +171,9 @@ const styles = StyleSheet.create({
         marginTop: 65
     },
     rowTitle : {
-        marginTop: 34
+        marginTop: 34,
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     },
     textTitle : {
         fontSize: 34,

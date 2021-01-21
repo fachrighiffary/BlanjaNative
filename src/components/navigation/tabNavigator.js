@@ -19,18 +19,8 @@ const TabNavigator = (props) => {
     let componentTabNavigator
     if(props.level == 2) {
       componentTabNavigator = 
-      <>
-        <Tab.Screen 
-            name="ShopStackScreen" 
-            component={ShopStackScreen}
-            options={{
-                tabBarLabel: 'Shop',
-                tabBarIcon: ({ color, size }) => (
-                  <Icon name="shopping-cart" color={color} size={size} />
-                ),
-              }} 
-              />
-            <Tab.Screen 
+      <> 
+       <Tab.Screen 
             name="Bag" 
             component={Bag}
             options={{
@@ -41,6 +31,18 @@ const TabNavigator = (props) => {
                 ),
               }} 
             />
+       
+               <Tab.Screen 
+            name="Favorites"
+            component={Favorites} 
+            options={{
+                tabBarLabel: 'Favorites',
+                tabBarIcon: ({ color, size }) => (
+                  <Icon name="heart" color={color} size={size} />
+                ),
+              }} 
+            />
+            
       </>
     }else{
       componentTabNavigator = 
@@ -64,19 +66,20 @@ const TabNavigator = (props) => {
                 ),
               }}
              />
-            
-              {componentTabNavigator}
-
-            <Tab.Screen 
-            name="Favorites"
-            component={Favorites} 
+              <Tab.Screen 
+            name="ShopStackScreen" 
+            component={ShopStackScreen}
             options={{
-                tabBarLabel: 'Favorites',
+                tabBarLabel: 'Shop',
                 tabBarIcon: ({ color, size }) => (
-                  <Icon name="heart" color={color} size={size} />
+                  <Icon name="shopping-cart" color={color} size={size} />
                 ),
               }} 
-            />
+              />
+            
+              {componentTabNavigator}
+             
+           
             <Tab.Screen 
             name="ProfileNavigation" 
             component={ProfileNavigation} 

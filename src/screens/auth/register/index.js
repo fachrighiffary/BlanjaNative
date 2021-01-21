@@ -15,7 +15,12 @@ class Register extends Component{
             username: '',
             email: '',
             password:'',
-            errorForm: ''
+            level: '',
+            errorForm: '',
+            backColorsell: '',
+            textColorsell: 'white',
+            backColorsCus: '',
+            textColorsCus: 'white',
         }
     }
 
@@ -23,11 +28,12 @@ class Register extends Component{
         const data = {
             username: this.state.username,
             email:this.state.email,
-            password: this.state.password
+            password: this.state.password,
+            level_id: this.state.level
         }
-        if(this.state.username === '' || this.state.email === '' || this.state.password === '' ){
+        if(this.state.username === '' || this.state.email === '' || this.state.password === '' || this.state.level === ''){
             this.setState({
-                errorForm: 'Semua Kolom harus diisi'
+                errorForm: 'Semua Kolom harus diisi \n Seller / costumer harus dipilih'
             })
         }else{
             axios
@@ -49,11 +55,37 @@ class Register extends Component{
     render(){
         let {email, username, password} = this.state
         
-        //console.log(this.state)
+        console.log(this.state.level)
         return(
             <View style={styles.container}>
                 <View style={styles.rowTitle}>
                     <Text style={styles.textTitle}>Sign Up</Text>
+                    <View style={{height:70, width: 100, backgroundColor:'red', justifyContent: 'space-between', alignItems: 'center', borderRadius: 10}}>
+                    <TouchableOpacity style={{backgroundColor:this.state.backColorsCus, height: 35, width: 100, borderTopLeftRadius: 10, borderTopRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} onPress={() => {
+                            this.setState({
+                                level: 2,
+                                backColorsCus: 'white',
+                                textColorsCus:'red',
+                                textColorsell: 'white',
+                                backColorsell: 'red'
+                               
+                            })
+                        }}>
+                            <Text  style={{color: this.state.textColorsCus}}>Customer</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{backgroundColor:this.state.backColorsell, height: 35, width: 100, borderBottomLeftRadius: 10, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} onPress={() => {
+                            this.setState({
+                                level: 1,
+                                textColorsell: 'red',
+                                backColorsell: 'white',
+                                backColorsCus: 'red',
+                                textColorsCus:'white'
+                            })
+                        }}>
+                            <Text style={{color: this.state.textColorsell}}>Seller</Text>
+                        </TouchableOpacity>
+                    </View>
+
                 </View>
                 <View style={styles.containerForm}>
                     <View style={styles.input}>
@@ -89,7 +121,7 @@ class Register extends Component{
                     </TouchableOpacity>
                 </View>
                 <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 40}}>
-                    <Text style={{color: 'red'}}>{this.state.errorForm}</Text>
+                    <Text style={{color: 'red', textAlign: 'center'}}>{this.state.errorForm}</Text>
                 </View>
                 <View style={{alignItems: 'center', marginTop: 32 }}>
                     <TouchableOpacity style={styles.btnLogin} onPress={this.handleSubmit}>
@@ -114,7 +146,9 @@ const styles = StyleSheet.create({
         marginTop: 65
     },
     rowTitle : {
-        marginTop: 34
+        marginTop: 34,
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     },
     textTitle : {
         fontSize: 34,
