@@ -53,9 +53,7 @@ class Register extends Component{
 
 
     render(){
-        let {email, username, password} = this.state
-        
-        console.log(this.state.level)
+        let {email, username, password} = this.state        
         return(
             <View style={styles.container}>
                 <View style={styles.rowTitle}>

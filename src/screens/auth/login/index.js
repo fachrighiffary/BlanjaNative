@@ -85,7 +85,7 @@ class Login extends Component{
     }
 
     render() {
-        console.log(this.state.level)
+        // console.log(this.state.level)
         return(
             <KeyboardAvoidingView style={styles.container}>
                 <TouchableOpacity onPress={ () => {

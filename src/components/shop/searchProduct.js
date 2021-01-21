@@ -20,9 +20,9 @@ export class SearchProduct extends Component {
 
 
     getData = () => {
-        const key = this.state.search
+        const key = '/search?key=' +  this.state.search
         axios
-        .get(API_URL + '/search?key=' + key )
+        .get(API_URL + key )
         .then((data) => {
             console.log(data)
             this.setState({

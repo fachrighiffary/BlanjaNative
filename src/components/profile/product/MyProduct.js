@@ -6,6 +6,7 @@ import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import { IconBack, Product4, Search } from '../../../assets'
 import RatingProduct from '../../product/rating'
 import {API_URL} from "@env"
+import { connect } from 'react-redux'
 
 export class MyProduct extends Component {
 
@@ -18,10 +19,10 @@ export class MyProduct extends Component {
     }
 
     getData = async() => {
-        const id = await AsyncStorage.getItem('userid')
+        const id = this.props.auth.id,
         const config = {
             headers: {
-              'x-access-token': 'Bearer ' + (await AsyncStorage.getItem('token')),
+              'x-access-token': 'Bearer ' + this.props.auth.token,
             },
           };
         axios
@@ -161,4 +162,11 @@ const styles = StyleSheet.create({
         marginBottom: 20}
 })
 
-export default MyProduct
+
+const mapStateToProps = ({auth}) => {
+    return(
+        auth
+    )
+}
+
+export default connect(mapStateToProps)(MyProduct) 

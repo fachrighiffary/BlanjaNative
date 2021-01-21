@@ -8,6 +8,7 @@ import { Rating, AirbnbRating } from 'react-native-ratings';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
 import {API_URL} from '@env'
+import { connect } from 'react-redux'
 
 
 export class RatingReview extends Component {
@@ -36,7 +37,7 @@ export class RatingReview extends Component {
     
     handleSubmit = async(rating,modalVisible) => {
         const data = { 
-            user_id : await AsyncStorage.getItem('userid'),
+            user_id :this.props.auth.id,
             rating : this.state.ratingPrdct,
             product_id: this.props.route.params[0],
             comment: this.state.comment
@@ -398,4 +399,10 @@ const styles = StyleSheet.create({
         }
 })
 
-export default RatingReview
+const mapStateToProps = ({auth}) => {
+    return(
+        auth
+    )
+}
+
+export default connect(mapStateToProps)(RatingReview)
