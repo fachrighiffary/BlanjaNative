@@ -22,10 +22,10 @@ class Profile extends Component{
             }
         });
     }
-    logout = async() => {
+    logout = () => {
         const config = {
             headers: {
-              'x-access-token': 'Bearer ' + (await AsyncStorage.getItem('token')),
+              'x-access-token': 'Bearer ' + this.props.auth.token
             },
           };
         axios

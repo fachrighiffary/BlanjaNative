@@ -10,7 +10,6 @@ import AddAddress from '../profile/AddAddress';
 import MyProduct from '../profile/product/MyProduct';
 import AddProduct from '../profile/product/AddProduct';
 import EditProduct from '../profile/product/EditProduct';
-import { connect } from 'react-redux';
 
 const Stack = createStackNavigator();
 
@@ -76,11 +75,6 @@ export class ProfileNavigation extends Component {
 }
 
 
-const mapStateToProps = ({auth}) => {
-    return {
-        auth
-    }
-}
 
 
-export default connect(mapStateToProps)(ProfileNavigation)
+export default ProfileNavigation

@@ -1,10 +1,10 @@
+import { API_URL } from '@env';
 import axios from 'axios';
-import { Input } from 'native-base'
-import React, { Component } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
-import {API_URL} from '@env'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Input } from 'native-base';
+import React, { Component } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { connect } from 'react-redux';
 
 
 export class AddAddress extends Component {
@@ -22,7 +22,7 @@ export class AddAddress extends Component {
         }
     }
 
-    handleSubmit = async() => {
+    handleSubmit = () => {
         const {address, name, address_dtl , city, post_code, phone_number} = this.state
         
         if(address === '' || name === '' || address_dtl === '' || city === '' ||  post_code === '' || phone_number === ''){
@@ -32,7 +32,7 @@ export class AddAddress extends Component {
             alert('Semua Data Harus Di isi')
         }else{
             const data = {
-                user_id : await AsyncStorage.getItem('userid'),
+                user_id : this.props.auth.id,
                 address: address,
                 name: name,
                 address_dtl: address_dtl,
@@ -42,7 +42,7 @@ export class AddAddress extends Component {
             }
             const config = {
                 headers: {
-                  'x-access-token': 'Bearer ' + (await AsyncStorage.getItem('token')),
+                  'x-access-token': 'Bearer ' + this.props.auth.token,
                 },
               };
             axios
@@ -188,4 +188,11 @@ const styles = StyleSheet.create({
 
 })
 
-export default AddAddress
+
+const mapStateToProps = ({auth}) => {
+    return (
+        auth
+    )
+}
+
+export default connect(mapStateToProps)(AddAddress) 

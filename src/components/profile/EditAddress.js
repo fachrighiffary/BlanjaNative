@@ -1,17 +1,17 @@
+import { API_URL } from '@env'
 import axios from 'axios'
 import { Input } from 'native-base'
 import React, { Component } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
-import {API_URL} from '@env'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import { connect } from 'react-redux'
 
 
 
 export class EditAddress extends Component {
 
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state = {
             id : '',
             address : '',
@@ -22,13 +22,13 @@ export class EditAddress extends Component {
             phone_number: '',
         }
     }
-    getAddressId = async() => {
+    getAddressId = () => {
         const id = this.props.route.params
         console.log(id)
 
         const config = {
             headers: {
-              'x-access-token': 'Bearer ' + (await AsyncStorage.getItem('token')),
+              'x-access-token': 'Bearer ' + this.props.auth.token,
             },
         };
         axios
@@ -49,10 +49,10 @@ export class EditAddress extends Component {
         })
     }
 
-    handleSubmit = async() => {
+    handleSubmit = () => {
         const id = this.state.id
         const data = {
-            user_id :  await AsyncStorage.getItem('userid'),
+            user_id : this.props.auth.id,
             address : this.state.address,
             name: this.state.name,
             city: this.state.city,
@@ -62,7 +62,7 @@ export class EditAddress extends Component {
         }
         const config = {
             headers: {
-              'x-access-token': 'Bearer ' + (await AsyncStorage.getItem('token')),
+              'x-access-token': 'Bearer ' + this.props.auth.token,
             },
         };
 
@@ -219,4 +219,11 @@ const styles = StyleSheet.create({
     }
 })
 
-export default EditAddress
+
+const mapStateToProps = ({auth}) => {
+    return (
+        auth
+    )
+}
+
+export default connect(mapStateToProps)(EditAddress) 
