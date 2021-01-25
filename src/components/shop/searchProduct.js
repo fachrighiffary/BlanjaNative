@@ -39,6 +39,10 @@ export class SearchProduct extends Component {
         this.getData()
     }
 
+    goToDetail = (id) => {
+        this.props.navigation.push('Detail', id)
+    }
+
     render() {
         console.log(API_URL)
         const {products, msg } = this.state

@@ -37,7 +37,7 @@ export class DetailProduct extends Component {
               };
             axios.get(API_URL + '/product/' + id, config)
             .then((data) => {
-                //console.log(data.data.data)
+                console.log(data.data.data)
                 this.setState({
                     product: data.data.data
                 })
@@ -71,7 +71,7 @@ export class DetailProduct extends Component {
                </View>
                {product && product.map(({id, product_name, product_img, product_desc, product_condition,total_rating , product_price, product_qty, product_size, product_color, store_name}, index) => {
                         return <DetailProd 
-                        id = {id}
+                        id_product = {id}
                         product_name={product_name}
                         product_img={product_img}
                         product_desc={product_desc}

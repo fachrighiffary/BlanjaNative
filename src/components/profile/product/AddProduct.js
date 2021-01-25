@@ -121,7 +121,7 @@ export class AddProduct extends Component {
 
     render() {
         const { modalVisible,product_img,taken_pic,product_name, category, product_price, product_qty, product_size, product_color, condition} = this.state;
-        console.log(this.state)
+        //console.log(this.state)
         let prevImgFromCamera;
         if (Object.keys(this.state.taken_pic).length > 0) {
             prevImgFromCamera =

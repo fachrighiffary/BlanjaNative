@@ -1,12 +1,12 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
 import React, { Component } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler'
 import { Search } from '../../assets'
 import {API_URL} from "@env"
+import { connect } from 'react-redux'
 
-export class ShipAddress extends Component {
+class ShipAddress extends Component {
 
     constructor(props){
         super(props);
@@ -15,12 +15,11 @@ export class ShipAddress extends Component {
         }
     }
 
-    getAddress = async() => {
-        const id = await AsyncStorage.getItem('userid')
-        //console.log(id)
+    getAddress = () => {
+        const id = this.props.id
         const config = {
             headers: {
-                'x-access-token': 'Bearer ' + (await AsyncStorage.getItem('token')),
+                'x-access-token': 'Bearer ' + this.props.token
             },
         };
         axios
@@ -43,10 +42,10 @@ export class ShipAddress extends Component {
         this.props.navigation.navigate('EditAddress', id)
     }
     
-    handleDelete = async(id) => {
+    handleDelete = (id) => {
         const config = {
             headers: {
-                'x-access-token': 'Bearer ' + (await AsyncStorage.getItem('token')),
+                'x-access-token': 'Bearer ' + this.props.token
             },
         };
         axios
@@ -62,7 +61,6 @@ export class ShipAddress extends Component {
 
 
     render() {
-        console.log(API_URL)
         const {address} = this.state
         return (
             <ScrollView style={{padding: 16}}>
@@ -145,4 +143,10 @@ const styles = StyleSheet.create({
     }
 })
 
-export default ShipAddress
+const mapStateToProps = ({auth}) => {
+    return(
+        auth
+    )
+}
+
+export default connect(mapStateToProps)(ShipAddress)

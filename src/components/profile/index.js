@@ -60,6 +60,18 @@ class Profile extends Component{
                     </View>
                 </TouchableOpacity>
                 <View style={styles.line} />
+                <TouchableOpacity onPress={() => {
+                            navigation.navigate('ShippingAddress')
+                        }}>
+                    <View style={styles.accordian}>
+                        <View>
+                            <Text style={{fontSize: 16, fontWeight: 'bold'}}>Shipping Address</Text>
+                            <Text style={{color: 'grey'}}>3 Address</Text>
+                        </View>
+                    <Image source={Go}/>
+                    </View>
+                </TouchableOpacity>
+                <View style={styles.line} />
                 </>
             
         }else{
@@ -100,18 +112,7 @@ class Profile extends Component{
                     </View>
                 </View>
                 {SellerOnly}
-                <TouchableOpacity onPress={() => {
-                            navigation.navigate('ShippingAddress')
-                        }}>
-                    <View style={styles.accordian}>
-                        <View>
-                            <Text style={{fontSize: 16, fontWeight: 'bold'}}>Shipping Address</Text>
-                            <Text style={{color: 'grey'}}>3 Address</Text>
-                        </View>
-                    <Image source={Go}/>
-                    </View>
-                </TouchableOpacity>
-                <View style={styles.line} />
+                
                 <TouchableOpacity onPress={() => {
                             navigation.navigate('Setting')
                         }}>

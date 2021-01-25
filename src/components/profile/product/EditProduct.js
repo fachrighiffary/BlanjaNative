@@ -22,17 +22,19 @@ export class EditProduct extends Component {
             product_size: '',
             product_color: '',
             condition: '',
+            photoFromDB: '',
             image: null,
             images: null,
             product_img: [],
             taken_pic: {},
-            modalVisible: false
+            modalVisible: false,
+            isSetImage: false
         }
     }
     setModalVisible = (visible) => {
         this.setState({ modalVisible: visible });
       }
-//  -----------------------------------------------------------------------   
+//  -------------CAMERA----------------------------------------------------------   
     chooseFile = () => {
     ImagePicker.openPicker({
         multiple: true,
@@ -62,9 +64,40 @@ export class EditProduct extends Component {
                 console.log(err);
             });
     };
+//------------------GET DATA BY ID---------------------------------------------
+    getdata = () => {
+        const id = this.props.route.params
+        const config = {
+            headers: {
+                'x-access-token': 'Bearer ' + this.props.auth.token,
+                'Content-type': 'multipart/form-data',
+            },
+        };
+        axios
+        .get(API_URL + '/product/' + id, config)
+        .then((data) => {
+            console.log(data.data.data[0])
+            this.setState({
+                product_name: data.data.data[0].product_name.toString(),
+                product_price: data.data.data[0].product_price.toString(),
+                product_qty: data.data.data[0].product_qty.toString(),
+                product_size: data.data.data[0].product_size,
+                product_color: data.data.data[0].product_color,
+                photoFromDB: data.data.data[0].product_img,
+            })
+        })
+        .catch((err) => {
+            console.log(err)
+        })
 
-// ---------------------------------------------------
+    }
+    componentDidMount = () => {
+        this.getdata();
+    }
+
+// -----------------HANDLE UPLOAD----------------------------------
     handleUploadProduct = () => {
+        const id = this.props.route.params
         const config = {
             headers: {
                 'x-access-token': 'Bearer ' + this.props.auth.token,
@@ -72,14 +105,11 @@ export class EditProduct extends Component {
             },
         };
         const data = new FormData();
-        data.append('user_id', this.props.auth.id)
         data.append('product_name', this.state.product_name)
-        data.append('category', this.state.category)
         data.append('product_price', this.state.product_price)
         data.append('product_qty', this.state.product_qty)
         data.append('product_size', this.state.product_size)
         data.append('product_color', this.state.product_color)
-        data.append('condition', this.state.condition)
         if (Object.keys(this.state.taken_pic).length > 0) {
             data.append('product_img', {
                 name: this.state.taken_pic.path.split('/').pop(),
@@ -104,22 +134,42 @@ export class EditProduct extends Component {
                 );
             }
         }
+    console.log('ini config',)
     console.log('ini adalah data dari data input',data)
     axios
-    .post(API_URL + `/products` ,data , config)
+    .patch(API_URL + `/product/` + id , data , config)
     .then((data) => {
         console.log(data)
+        this.props.navigation.push("MyProduct")
     })
-    .catch((err) => {
-        console.log(err)
-        alert('Data gagal Ditambahkan')
+    .catch(({response}) => {
+        console.log(response.data)
+        alert('Data gagal Diubah')
     })
     } 
    
 
 
     render() {
-        const { modalVisible,product_img,taken_pic,product_name, category, product_price, product_qty, product_size, product_color, condition} = this.state;
+        const {isSetImage, modalVisible,product_img,taken_pic,product_name, category, product_price, product_qty, product_size, product_color, condition} = this.state;
+        console.log(this.props.auth.token)
+        let thumbPhoto;
+        let {photoFromDB} = this.state
+        photoFromDB = photoFromDB.split(',')
+        if (!isSetImage) {
+            thumbPhoto =
+                <>
+                    {
+                        photoFromDB && photoFromDB.map((items, index) => <>
+                            <Image
+                                key={index}
+                                source={{ uri: API_URL + items }}
+                                style={styles.imageStyle}
+                            />
+                        </>)
+                    }
+                </>
+        }
         console.log(this.state)
         let prevImgFromCamera;
         if (Object.keys(this.state.taken_pic).length > 0) {
@@ -133,7 +183,7 @@ export class EditProduct extends Component {
         }
 
         return (
-            <ScrollView>
+            <ScrollView >
                 <View style={{paddingHorizontal: 16, paddingTop: 20}}>
                     <TouchableOpacity onPress={() => {this.props.navigation.goBack()}}>
                         <Image source={IconBack} />
@@ -150,29 +200,6 @@ export class EditProduct extends Component {
                             onChangeText={(text) => { this.setState({ product_name: text }) }}
                             />
                         </View>
-                    </View>
-                    <View style={{marginBottom: 20}}>
-                        <Text style={{marginLeft: 7, fontSize: 18, marginBottom: 10}}>Categpry</Text>
-                        <DropDownPicker
-                            items={[
-                                {label: 'T-Shirt', value: '1'},
-                                {label: 'Short', value: '2',},
-                                {label: 'Jacket', value: '3'},
-                                {label: 'Pants', value: '4',},
-                                {label: 'Shoes', value: '5'}
-                            ]}
-                            defaultValue={this.state.category}
-                            containerStyle={{height: 40}}
-                            style={{backgroundColor: '#fafafa'}}
-                            itemStyle={{
-                                justifyContent: 'flex-start'
-                            }}
-                            dropDownStyle={{backgroundColor: '#fafafa'}}
-                            onChangeItem={item => this.setState({
-                                category: item.value
-                            })}
-                            placeholder="Select Category"
-                        />
                     </View>
                     <View style={{marginBottom: 20}}>
                         <Text style={{fontSize: 18, marginBottom: 10}}>Product Price</Text>
@@ -217,26 +244,6 @@ export class EditProduct extends Component {
                         </View>
                     </View>
                     <View style={{marginBottom: 20}}>
-                        <Text style={{marginLeft: 7, fontSize: 18, marginBottom: 10}}>Product Condition</Text>
-                        <DropDownPicker
-                            items={[
-                                {label: 'New', value: 'NEW'},
-                                {label: 'Second', value: 'SECOND',},
-                            ]}
-                            defaultValue={this.state.condition}
-                            containerStyle={{height: 40}}
-                            style={{backgroundColor: '#fafafa'}}
-                            itemStyle={{
-                                justifyContent: 'flex-start'
-                            }}
-                            dropDownStyle={{backgroundColor: '#fafafa'}}
-                            onChangeItem={item => this.setState({
-                                condition : item.value
-                            })}
-                            placeholder="Select Condition"
-                        />
-                    </View>
-                    <View style={{marginBottom: 20}}>
                         <Text style={{fontSize: 18, marginBottom: 10}}>Product Image</Text>
                         <ScrollView horizontal={true}>
                           <View style={{ flexDirection: 'row' }}>
@@ -250,6 +257,7 @@ export class EditProduct extends Component {
                                 );
                             })}
                             {prevImgFromCamera}
+                            {thumbPhoto}
                         </View>
                         </ScrollView>
                         <TouchableOpacity 

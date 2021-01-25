@@ -28,7 +28,7 @@ export class EditAddress extends Component {
 
         const config = {
             headers: {
-              'x-access-token': 'Bearer ' + this.props.auth.token,
+              'x-access-token': 'Bearer ' + this.props.token,
             },
         };
         axios
@@ -52,7 +52,7 @@ export class EditAddress extends Component {
     handleSubmit = () => {
         const id = this.state.id
         const data = {
-            user_id : this.props.auth.id,
+            user_id : this.props.id,
             address : this.state.address,
             name: this.state.name,
             city: this.state.city,
@@ -62,7 +62,7 @@ export class EditAddress extends Component {
         }
         const config = {
             headers: {
-              'x-access-token': 'Bearer ' + this.props.auth.token,
+              'x-access-token': 'Bearer ' + this.props.token,
             },
         };
 

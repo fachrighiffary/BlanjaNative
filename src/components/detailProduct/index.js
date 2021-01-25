@@ -53,12 +53,12 @@ export class DetailProd extends Component {
         })
     }
 
-    goToReview = (id, total_rating) => {
-        this.props.navigation.navigate('RatingReview',[id, total_rating])
+    goToReview = (id_product, total_rating) => {
+        this.props.navigation.navigate('RatingReview',[id_product, total_rating])
     }
 
     render() {
-        const {id, product_name, product_img, product_desc, total_rating, product_price, product_size, product_color, product_qty, store_name, product_condition, index} = this.props
+        const {id_product, product_name, product_img, product_desc, total_rating, product_price, product_size, product_color, product_qty, store_name, product_condition, index} = this.props
         const {size, color, imgProd} = this.state
         //console.log(size, color, imgProd)
         return (
@@ -150,7 +150,7 @@ export class DetailProd extends Component {
                         
                         <View style={{borderWidth: 1}}></View>
                         <TouchableOpacity style={styles.detailDtl} onPress={() => {
-                            this.goToReview(id, total_rating)
+                            this.goToReview(id_product, total_rating)
                         }}>
                             <Text>Rating & Review</Text>
                             <Image source={Go} />

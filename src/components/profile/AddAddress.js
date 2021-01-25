@@ -32,7 +32,7 @@ export class AddAddress extends Component {
             alert('Semua Data Harus Di isi')
         }else{
             const data = {
-                user_id : this.props.auth.id,
+                user_id : this.props.id,
                 address: address,
                 name: name,
                 address_dtl: address_dtl,
@@ -42,7 +42,7 @@ export class AddAddress extends Component {
             }
             const config = {
                 headers: {
-                  'x-access-token': 'Bearer ' + this.props.auth.token,
+                  'x-access-token': 'Bearer ' + this.props.token,
                 },
               };
             axios

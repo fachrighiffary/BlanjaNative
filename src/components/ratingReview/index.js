@@ -18,7 +18,8 @@ export class RatingReview extends Component {
             modalVisible: false,
             comment: '',
             ratingPrdct: '',
-            review : []
+            review : [],
+            allRating: 0
           };
     }
    
@@ -35,14 +36,14 @@ export class RatingReview extends Component {
         })
       }
     
-    handleSubmit = async(rating,modalVisible) => {
+    handleSubmit = (rating,modalVisible) => {
         const data = { 
-            user_id :this.props.auth.id,
+            user_id :this.props.id,
             rating : this.state.ratingPrdct,
             product_id: this.props.route.params[0],
             comment: this.state.comment
         }
-        console.log(data)
+        //console.log(data)
         axios
         .post(API_URL + '/rating',data)
         .then((data) => {
@@ -61,9 +62,11 @@ export class RatingReview extends Component {
         axios
         .get(API_URL + '/rating/' + product_id)
         .then((data) => {
-            //console.log(data.data.data)
+            //console.log(data.data.data.length)
             this.setState({
-                review : data.data.data
+                review : data.data.data,
+                allRating: data.data.data.length
+
             })
         })
         .catch((err) => {
@@ -78,8 +81,6 @@ export class RatingReview extends Component {
 
     render() {
         const { modalVisible, review} = this.state;
-        console.log(this.state)
-        console.log(API_URL)
         return (
             <View style={{padding: 15}}>
                 <View style={{marginTop: 9}}>
@@ -98,7 +99,7 @@ export class RatingReview extends Component {
                 <View style={styles.containerRating}>
                     <View style={styles.ratingNum}>
                         <Text style={{fontSize: 44, fontWeight: 'bold'}}>{this.props.route.params[1].toFixed(1)}</Text>
-                        <Text>10 Rating</Text>
+                        <Text>{this.state.allRating} Rating</Text>
                     </View>
                     <View style={styles.ratingDtl}>
                         <View style={styles.rating}>
@@ -182,7 +183,7 @@ export class RatingReview extends Component {
                 {/* total review */}
 
                 <View style={{marginTop: 37}}> 
-                    <Text style={{fontSize: 24, fontWeight: '800'}}>8 Reviews</Text>
+                    <Text style={{fontSize: 24, fontWeight: '800'}}>{this.state.allRating} Reviews</Text>
                 </View>
 
                 {/* Comment Section */}

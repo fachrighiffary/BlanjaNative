@@ -15,23 +15,25 @@ class Register extends Component{
             username: '',
             email: '',
             password:'',
+            store_name: '',
             level: '',
             errorForm: '',
             backColorsell: '',
-            textColorsell: 'white',
+            textColorsell: 'red',
             backColorsCus: '',
-            textColorsCus: 'white',
+            textColorsCus: 'red',
         }
     }
 
     handleSubmit = () => {
         const data = {
-            username: this.state.username,
-            email:this.state.email,
-            password: this.state.password,
-            level_id: this.state.level
+            username    : this.state.username,
+            email       : this.state.email,
+            store_name  : this.state.store_name,
+            password    : this.state.password,
+            level_id    : this.state.level
         }
-        if(this.state.username === '' || this.state.email === '' || this.state.password === '' || this.state.level === ''){
+        if(this.state.username === '' || this.state.email === '' || this.state.password === '' || this.state.level === '' ||  this.state.email === ''){
             this.setState({
                 errorForm: 'Semua Kolom harus diisi \n Seller / costumer harus dipilih'
             })
@@ -53,37 +55,57 @@ class Register extends Component{
 
 
     render(){
-        let {email, username, password} = this.state        
+        let {email, username, password,  store_name} = this.state        
         return(
             <View style={styles.container}>
                 <View style={styles.rowTitle}>
                     <Text style={styles.textTitle}>Sign Up</Text>
-                    <View style={{height:70, width: 100, backgroundColor:'red', justifyContent: 'space-between', alignItems: 'center', borderRadius: 10}}>
-                    <TouchableOpacity style={{backgroundColor:this.state.backColorsCus, height: 35, width: 100, borderTopLeftRadius: 10, borderTopRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} onPress={() => {
-                            this.setState({
-                                level: 2,
-                                backColorsCus: 'white',
-                                textColorsCus:'red',
-                                textColorsell: 'white',
-                                backColorsell: 'red'
-                               
-                            })
-                        }}>
-                            <Text  style={{color: this.state.textColorsCus}}>Customer</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={{backgroundColor:this.state.backColorsell, height: 35, width: 100, borderBottomLeftRadius: 10, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} onPress={() => {
-                            this.setState({
-                                level: 1,
-                                textColorsell: 'red',
-                                backColorsell: 'white',
-                                backColorsCus: 'red',
-                                textColorsCus:'white'
-                            })
-                        }}>
-                            <Text style={{color: this.state.textColorsell}}>Seller</Text>
-                        </TouchableOpacity>
-                    </View>
-
+                </View>
+                <View style={styles.containerRole}>
+                    <TouchableOpacity 
+                    style={{
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            width: 170,
+                            height: 48,
+                            backgroundColor:this.state.backColorsCus,
+                            borderTopLeftRadius: 10,
+                            borderBottomLeftRadius: 10
+                        }} 
+                    onPress={() => {
+                        this.setState({
+                            level: 2,
+                            backColorsCus: 'red',
+                            textColorsCus:'white',
+                            textColorsell: 'red',
+                            backColorsell: 'white'
+                            
+                        })
+                    }}>
+                        <Text style={{color: this.state.textColorsCus}}>Customer</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                    style={{
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        width: 170,
+                        height: 48,
+                        backgroundColor:this.state.backColorsell,
+                        borderTopRightRadius: 10,
+                        borderBottomRightRadius: 10
+                    }}
+                    onPress={() => {
+                        this.setState({
+                            level: 1,
+                            textColorsell: 'white',
+                            backColorsell: 'red',
+                            backColorsCus: 'white',
+                            textColorsCus:'red'
+                        })
+                    }}
+                    >
+                        <Text style={{color: this.state.textColorsell}}>Seller</Text>
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.containerForm}>
                     <View style={styles.input}>
@@ -103,6 +125,13 @@ class Register extends Component{
                     </View>
                     <View style={styles.input}>
                         <Input 
+                        placeholder='Store Name'
+                        value={store_name} 
+                        onChangeText={(text) => { this.setState({ store_name: text }) }} 
+                        />
+                    </View>
+                    <View style={styles.input}>
+                        <Input 
                         secureTextEntry={true} 
                         placeholder='Password'
                         value={password} 
@@ -118,10 +147,10 @@ class Register extends Component{
                         <Image source={IconNext} />
                     </TouchableOpacity>
                 </View>
-                <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 40}}>
+                <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 20}}>
                     <Text style={{color: 'red', textAlign: 'center'}}>{this.state.errorForm}</Text>
                 </View>
-                <View style={{alignItems: 'center', marginTop: 32 }}>
+                <View style={{alignItems: 'center' }}>
                     <TouchableOpacity style={styles.btnLogin} onPress={this.handleSubmit}>
                         <Text style={{color: 'white'}}>Sign Up</Text>
                     </TouchableOpacity>
@@ -141,7 +170,7 @@ const styles = StyleSheet.create({
     },
     containerForm: {
         alignItems: 'center',
-        marginTop: 65
+        marginTop: 10
     },
     rowTitle : {
         marginTop: 34,
@@ -170,7 +199,20 @@ const styles = StyleSheet.create({
         width: 343, 
         backgroundColor: '#DB3022',
         borderRadius: 25,
-        marginTop: 32
+        marginTop: 12
+    },
+    containerRole: {
+        height:50, 
+        width: 343, 
+        backgroundColor: 'white', 
+        alignSelf: 'center', 
+        borderRadius: 10, 
+        marginTop: 54,
+        borderWidth: 1,
+        borderColor: '#DB3022',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
     },
 
 

@@ -4,6 +4,7 @@ const initialState = {
     name:'',
     level: '',
     id: '',
+    store_name:'',
     token: ''
 }
 
@@ -17,6 +18,7 @@ const AuthReducer = (prevState = initialState, action) => {
                 name: action.data.name,
                 level: action.data.level,
                 id: action.data.id,
+                store_name: action.data.store_name,
                 token: action.data.token
             }
         case "LOGIN_FALSE":
@@ -27,6 +29,7 @@ const AuthReducer = (prevState = initialState, action) => {
                 name:'',
                 level: '',
                 id: '',
+                store_name:'',
                 token: ''
             }
         default:

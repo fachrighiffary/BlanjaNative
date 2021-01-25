@@ -10,19 +10,19 @@ import { connect } from 'react-redux'
 
 export class MyProduct extends Component {
 
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state = {
             products : [],
             errMsg : ''
         }
     }
 
-    getData = async() => {
-        const id = this.props.auth.id,
+    getData = () => {
+        const id = this.props.id;
         const config = {
             headers: {
-              'x-access-token': 'Bearer ' + this.props.auth.token,
+              'x-access-token': 'Bearer ' + this.props.token,
             },
           };
         axios
@@ -35,10 +35,28 @@ export class MyProduct extends Component {
             })
         })
         .catch((err) => {
-            console.log(err)
+            this.setState({
+                errMsg: 'Nothing product'
+            })
         })
     }
 
+    handleDelete = (id) => {
+        const config = {
+            headers: {
+                'x-access-token': 'Bearer ' + this.props.token
+            },
+        };
+        axios
+        .delete(API_URL + '/product/' + id, config)
+        .then((data) => {
+            console.log(data)
+            this.getData()
+        })
+        .catch(({response}) => {
+            console.log(response.data)
+        })
+    }
 
     componentDidMount = () => {
         this.getData()
@@ -48,6 +66,40 @@ export class MyProduct extends Component {
 
     render() {
         const {products, errMsg} = this.state
+        let product;
+        if(product == []){
+            product = 
+            <>
+            <View style={{alignSelf: 'center', height: 400, justifyContent: 'center', alignItems: 'center'}}>
+                <Text style={{fontSize: 20}}>{errMsg}</Text>
+            </View>
+            </>
+        }else{
+            product = 
+            <>
+            {products && products.map(({id, product_name, product_price, product_img}, index) => {
+                        let httpImage = { uri : API_URL + product_img.split(',')[0]}
+                        return (
+                            <View activeOpacity={0.6} key={index}  style={styles.card}>
+                                <Image style={styles.img} source={httpImage} />
+                                <View style={{marginLeft: 11, paddingTop: 11,width:150,overflow: 'hidden', maxWidth: 150}}>
+                                    <Text>{product_name}</Text>
+                                    <Text style={{marginTop: 20}}>Rp. {product_price}</Text>
+                                </View>
+                                <View style={{marginLeft: 10, marginTop: 20}}>
+                                    <TouchableOpacity onPress={() => {this.props.navigation.navigate('EditProduct', id)}}>
+                                        <Text style={{fontSize: 16}}>Edit</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => {this.handleDelete(id)}}>
+                                        <Text  style={{fontSize: 16, color: 'red'}}>Delete</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        )
+                    })}
+            </>
+        }
+
         return (
             <View style={{padding: 14}}>
                 <View style={{width: '100%', justifyContent: 'space-between', flexDirection: 'row', marginTop: 24}}>
@@ -69,26 +121,7 @@ export class MyProduct extends Component {
                     <Text style={{fontSize: 20}}>{errMsg}</Text>
                 </View>
                 <ScrollView style={styles.containerProduct}>
-                    {products && products.map(({id, product_name, product_price, product_img}, index) => {
-                        let httpImage = { uri : API_URL + product_img.split(',')[0]}
-                        return (
-                            <TouchableOpacity activeOpacity={0.6} key={index}  style={styles.card}>
-                                <Image style={styles.img} source={httpImage} />
-                                <View style={{marginLeft: 11, paddingTop: 11}}>
-                                    <Text>{product_name}</Text>
-                                    <Text style={{marginTop: 20}}>Rp. {product_price}</Text>
-                                </View>
-                                <View style={{marginLeft: 90, marginTop: 20}}>
-                                    <TouchableOpacity onPress={() => {this.props.navigation.navigate('EditProduct')}}>
-                                        <Text style={{fontSize: 16}}>Edit</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => {alert('Delete bosku')}}>
-                                        <Text  style={{fontSize: 16, color: 'red'}}>Delete</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </TouchableOpacity>
-                        )
-                    })}
+                    {product}
                 </ScrollView>
                 <TouchableOpacity 
                 activeOpacity={0.6} 

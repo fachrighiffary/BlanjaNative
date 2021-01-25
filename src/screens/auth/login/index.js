@@ -9,21 +9,6 @@ import { IconBack, IconNext } from '../../../assets'
 import { setLoginTrue } from '../../../public/redux/ActionCreators/Auth'
 import { API_URL } from "@env"
 
-// const getData = async () => {
-//     try {
-//       const value = await AsyncStorage.getItem('token');
-//       const userid = await AsyncStorage.getItem('userid');
-//       const username = await AsyncStorage.getItem('username');
-//       if (value !== null) {
-//         // value previously stored
-//         console.log(value);
-//         console.log(userid);
-//         console.log(username)
-//       }
-//     } catch (e) {
-//       // error reading value
-//     }
-//   };
 
 class Login extends Component{
 
@@ -35,16 +20,21 @@ class Login extends Component{
             level: '',
             errMsg: '',
             backColorsell: '',
-            textColorsell: 'white',
+            textColorsell: 'red',
             backColorsCus: '',
-            textColorsCus: 'white',
+            textColorsCus: 'red',
         }
     }
 
     handleSubmit = () => {
-        if(this.state.email === '' || this.state.password === '' || this.state.level === ''){
+        if(this.state.email === '' || this.state.password === ''){
             this.setState({
-                errMsg: 'Email atau password tidak boleh kosong \n Seller / Costumer harus dipilih'
+                errMsg: 'Email atau password tidak boleh kosong \n Seller / Costumer harus dipilih',
+                password: '',
+            })
+        }else if(this.state.level === ''){
+            this.setState({
+                errMsg: 'Pilih Role Anda terlebih dahulu',
             })
         }else{
             const data = {
@@ -52,29 +42,19 @@ class Login extends Component{
               password : this.state.password,
               level_id : this.state.level
             };
-            //console.log(data)
             axios.post(API_URL + '/auth/login', data)
             .then(async (res) => {
-                // console.log(res.data.data)
-                // const token = res.data.data.token;
-                // const username = res.data.data.username
-                // const id = res.data.data.id;
-                // const userid = id.toString();
-                // await AsyncStorage.setItem('token', token);
-                // await AsyncStorage.setItem('userid', userid);
-                // await AsyncStorage.setItem('username', username);
                 const dataLogin = {
-                    name:res.data.data.username,
-                    email:res.data.data.email,
-                    level:res.data.data.level,
-                    id:res.data.data.id,
-                    token:res.data.data.token
+                    name        :res.data.data.username,
+                    email       :res.data.data.email,
+                    level       :res.data.data.level,
+                    id          :res.data.data.id,
+                    store_name  : res.data.data.store_name,
+                    token       :res.data.data.token
                 }
                 console.log(dataLogin)
                 this.props.dispatch(setLoginTrue(dataLogin))
                 this.props.navigation.replace('HomeScreen')
-                //console.log(token);
-                // await getData();
             })
             .catch((err) => {
                 this.setState({
@@ -95,31 +75,52 @@ class Login extends Component{
                 </TouchableOpacity>
                 <View style={styles.rowTitle}>
                     <Text style={styles.textTitle}>Login</Text>
-                    <View style={{height:70, width: 100, backgroundColor:'red', justifyContent: 'space-between', alignItems: 'center', borderRadius: 10}}>
-                        <TouchableOpacity style={{backgroundColor:this.state.backColorsCus, height: 35, width: 100, borderTopLeftRadius: 10, borderTopRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} onPress={() => {
-                            this.setState({
-                                level: 2,
-                                backColorsCus: 'white',
-                                textColorsCus:'red',
-                                textColorsell: 'white',
-                                backColorsell: 'red'
-                               
-                            })
-                        }}>
-                            <Text  style={{color: this.state.textColorsCus}}>Customer</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={{backgroundColor:this.state.backColorsell, height: 35, width: 100, borderBottomLeftRadius: 10, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} onPress={() => {
-                            this.setState({
-                                level: 1,
-                                textColorsell: 'red',
-                                backColorsell: 'white',
-                                backColorsCus: 'red',
-                                textColorsCus:'white'
-                            })
-                        }}>
-                            <Text style={{color: this.state.textColorsell}}>Seller</Text>
-                        </TouchableOpacity>
-                    </View>
+                </View>
+                <View style={styles.containerRole}>
+                    <TouchableOpacity 
+                    style={{
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            width: 170,
+                            height: 48,
+                            backgroundColor:this.state.backColorsCus,
+                            borderTopLeftRadius: 10,
+                            borderBottomLeftRadius: 10
+                        }} 
+                    onPress={() => {
+                        this.setState({
+                            level: 2,
+                            backColorsCus: 'red',
+                            textColorsCus:'white',
+                            textColorsell: 'red',
+                            backColorsell: 'white'
+                            
+                        })
+                    }}>
+                        <Text style={{color: this.state.textColorsCus}}>Customer</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                    style={{
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        width: 170,
+                        height: 48,
+                        backgroundColor:this.state.backColorsell,
+                        borderTopRightRadius: 10,
+                        borderBottomRightRadius: 10
+                    }}
+                    onPress={() => {
+                        this.setState({
+                            level: 1,
+                            textColorsell: 'white',
+                            backColorsell: 'red',
+                            backColorsCus: 'white',
+                            textColorsCus:'red'
+                        })
+                    }}
+                    >
+                        <Text style={{color: this.state.textColorsell}}>Seller</Text>
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.containerForm}>
                     <View style={styles.input}>
@@ -134,6 +135,7 @@ class Login extends Component{
                             placeholder='Password' 
                             secureTextEntry={true}
                             name="password" 
+                            value={this.state.password}
                             onChangeText={(text) => { this.setState({ password: text }) }} 
                         />
                     </View>
@@ -154,6 +156,11 @@ class Login extends Component{
                         <TouchableOpacity style={styles.btnLogin} onPress={this.handleSubmit}>
                             <Text style={{color: 'white'}}>LOGIN</Text>
                         </TouchableOpacity>
+                        <TouchableOpacity style={{alignSelf: 'center', marginTop: 10}} onPress={ () => {
+                            this.props.navigation.navigate('Register');
+                            }}>
+                            <Text>Dont have Account, Click Here to Register!</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </KeyboardAvoidingView>
@@ -168,7 +175,7 @@ const styles = StyleSheet.create({
     },
     containerForm: {
         alignItems: 'center',
-        marginTop: 65
+        marginTop: 10
     },
     rowTitle : {
         marginTop: 34,
@@ -199,8 +206,19 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         marginTop: 32
     },
-
-
+    containerRole: {
+        height:50, 
+        width: 343, 
+        backgroundColor: 'white', 
+        alignSelf: 'center', 
+        borderRadius: 10, 
+        marginTop: 54,
+        borderWidth: 1,
+        borderColor: '#DB3022',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
 })
 
 const mapStateToProps = ({auth}) => {
@@ -209,8 +227,6 @@ const mapStateToProps = ({auth}) => {
     }
 }
 export default connect(mapStateToProps)(Login)
-
-
 
 
 
