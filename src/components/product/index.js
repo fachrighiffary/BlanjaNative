@@ -7,7 +7,9 @@ import RatingProduct from './rating'
 import {API_URL} from "@env"
 
 const Product = ({status, navigation, url}) => {
-
+    const toPrice = (x) => {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
     const [product, setProducts] = useState([]);
 
     useEffect(() => {
@@ -60,7 +62,7 @@ const Product = ({status, navigation, url}) => {
                                 </View>
                                 <View style={{maxWidth: 148, maxHeight: 20, position: 'relative'}}>
                                     <Text style={{fontSize : 19, fontWeight: 'bold'}}>{product_name}</Text>
-                                    <Text style={{fontSize : 19, fontWeight: 'bold'}}>Rp.{product_price}</Text>
+                                    <Text style={{fontSize : 19, fontWeight: 'bold'}}>Rp.{toPrice(product_price)}</Text>
                                 </View>
                             </TouchableOpacity>
 

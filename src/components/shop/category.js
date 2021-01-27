@@ -83,7 +83,6 @@ export class Category extends Component {
     }
 
     render() {
-        console.log(this.state.sort)
         const {title} = this.props.route.params
         const {product, modalVisible} = this.state
         return (
@@ -229,8 +228,7 @@ export class Category extends Component {
                                    })
                                 }} style={{...styles.sortButton, backgroundColor: this.state.backgroundColorLow}} >
                                     <Text style={{fontSize: 16, fontWeight: '500', color: this.state.colorLow}}>Price: highest to low</Text>
-                                </Button>
-                                
+                                </Button>   
                             </View>
                             <Button
                                 style={{ ...styles.openButton, backgroundColor: "red" }}
@@ -238,7 +236,7 @@ export class Category extends Component {
                                 this.setModalVisible(!modalVisible);
                                 }}
                             >
-                                <Text style={styles.textStyle}>Hide Modal</Text>
+                                <Text style={styles.textStyle}>Close</Text>
                             </Button>
                         </View>
                     </View>

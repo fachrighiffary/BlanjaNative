@@ -6,13 +6,16 @@ import { ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-ha
 import { Search } from '../../assets'
 import {API_URL} from "@env"
 import { connect } from 'react-redux'
+import {setAddress} from '../../public/redux/ActionCreators/Address'
 
 export class ShippingAddress extends Component {
 
     constructor(props){
         super(props);
         this.state = {
-            address : []
+            address : [],
+            selectedAddress: null,
+            color: false
         }
     }
 
@@ -44,10 +47,10 @@ export class ShippingAddress extends Component {
         this.props.navigation.navigate('EditAddress', id)
     }
     
-    handleDelete = async(id) => {
+    handleDelete = (id) => {
         const config = {
             headers: {
-                'x-access-token': 'Bearer ' + (await AsyncStorage.getItem('token')),
+                'x-access-token': 'Bearer ' + this.props.auth.token,
             },
         };
         axios
@@ -59,6 +62,23 @@ export class ShippingAddress extends Component {
         .catch((err) => {
             console.log(err)
         })
+    }
+
+
+    setAddress = (id) => {
+        this.setState({
+            color: !this.state.color,
+            selectedAddress: id
+        })
+    }
+
+    setActiveAddress = () => {
+        if(this.state.selectedAddress === null){
+            alert('Select your address first')
+        }else{
+            this.props.dispatch(setAddress(this.state.selectedAddress))
+            this.props.navigation.push('Checkout')
+        }
     }
 
 
@@ -74,8 +94,12 @@ export class ShippingAddress extends Component {
                     <Text style={{fontSize: 16, fontWeight: 'bold'}}>Shipping Address</Text>
                 </View>
                 {address && address.map(({id, name, address, address_dtl, city, post_code, phone_number}, index) => {
+                    const colorSelected = id == this.state.selectedAddress ? true : false 
                     return (
-                        <View style={styles.cardAddress} key={index}> 
+                        <TouchableOpacity 
+                        style={{...styles.cardAddress, backgroundColor:colorSelected ? 'lightgrey' : 'white' }} 
+                        key={index} 
+                        onPress={() => {this.setAddress(id)}}> 
                             <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                                 <Text>{name}</Text>
                                     <TouchableOpacity onPress={() => {
@@ -97,13 +121,11 @@ export class ShippingAddress extends Component {
                                     </TouchableOpacity>
                                 </View>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     )
                 })}
-                <TouchableOpacity style={styles.btnAddAddress} onPress={() => {
-                    this.props.navigation.navigate('AddAddress')
-                }}>
-                    <Text>Add New Address</Text>
+                <TouchableOpacity style={styles.btnAddAddress} onPress={this.setActiveAddress}>
+                    <Text>Set Addres</Text>
                 </TouchableOpacity>
             </ScrollView>
         )
@@ -140,15 +162,14 @@ const styles = StyleSheet.create({
         borderRadius: 24,
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 50
-
     }
 })
 
 
-const mapStateToProps = ({auth}) => {
+const mapStateToProps = ({auth, address}) => {
     return {
-        auth
+        auth,
+        address
     }
 }
 

@@ -61,7 +61,7 @@ export class AddAddress extends Component {
 
     render() {
         // console.log(API_URL)
-        console.log(this.state)
+        // console.log(this.state)
         return (
             <ScrollView>
                 <View style={styles.card}>

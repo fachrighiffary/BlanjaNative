@@ -5,7 +5,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 import Bag from '../bag'
-import Favorites from '../Favorites'
 import Home from '../home'
 import Profile from '../profile'
 import Shop from '../shop'
@@ -31,18 +30,6 @@ const TabNavigator = (props) => {
                 ),
               }} 
             />
-       
-               <Tab.Screen 
-            name="Favorites"
-            component={Favorites} 
-            options={{
-                tabBarLabel: 'Favorites',
-                tabBarIcon: ({ color, size }) => (
-                  <Icon name="heart" color={color} size={size} />
-                ),
-              }} 
-            />
-            
       </>
     }else{
       componentTabNavigator = 

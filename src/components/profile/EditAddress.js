@@ -87,7 +87,7 @@ export class EditAddress extends Component {
     render() {
         console.log(API_URL)
         const {id, address, name, city, address_dtl, post_code, phone_number} = this.state
-        console.log(this.state)
+        // console.log(this.state)
         return (
             <ScrollView>
                 <View style={styles.card}>

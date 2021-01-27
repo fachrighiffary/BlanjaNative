@@ -4,52 +4,126 @@ import React, { Component } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
-import { Search } from '../../assets';
-
+import { Product4, Search } from '../../assets';
+import {addQty, minQty, removeItems} from '../../public/redux/ActionCreators/Bag'
 
 class Bag extends Component{
-
+    toPrice = (x) => {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
     constructor(props){
         super(props);
         this.state = {
-            transaction : [],
             plus: '',
             mines: ''
         }
+        
     }
-    
 
-    getTransaction = () => {
-        const id = this.props.auth.id
-        const config = {
-            headers: {
-              'x-access-token': 'Bearer ' + this.props.auth.token,
-            },
-          };
-        axios
-        .get(API_URL + '/transaction/' + id, config)
-        .then((data) => {
-            //console.log(data.data.data)
-            this.setState({
-                transaction: data.data.data
-            })
-        })
-        .catch((err) => {
-            console.log(err)
-        })
+    mines = (product_id, color, size, price, qty) => {
+        const data = {
+            product_id: product_id,
+            color: color,
+            size: size,
+            price: price,
+        }
+        console.log(qty)
+        if(qty > 1){
+            this.props.dispatch(minQty(data))
+        }else{
+            qty = 1
+        }
     }
+
+    plus = (product_id, color, size, price) => {
+        const data = {
+            product_id: product_id,
+            color: color,
+            size: size,
+            price: price,
+        }
+        this.props.dispatch(addQty(data))
+       
+    }
+
+    remove = (product_id, color, size, price) => {
+        const data = {
+            product_id: product_id,
+            color: color,
+            size: size,
+            price: price,
+        }
+       this.props.dispatch(removeItems(data))
+    }
+
+
 
     componentDidMount = () => {
-        this.getTransaction();
         this._unsubscribe = this.props.navigation.addListener('focus', () => {
             if(!this.props.auth.isLogin){
                 this.props.navigation.navigate('Login')
             }
         });
     }
+    componentWillUnmount() {
+        this._unsubscribe()
+    }
 
     render(){
-        const {transaction} = this.state
+        const bagState = this.props.bag.mybag
+        //console.log(this.props.bag.totalAmmount)
+        let thisBag;
+        if(bagState.length < 1){
+            thisBag =
+            <><View><Text>Cart anda masih kosong</Text></View></>
+        }else{
+            thisBag =
+            <>
+            {bagState && bagState.map(({ product_id, product_img, product_name, color, size, qty, price }, index) => {
+                let httpImage = { uri : API_URL + product_img}
+                return(
+                    <View style={styles.cardBag}  key={index}>
+                        <TouchableOpacity>
+                            <Image style={styles.img} source={httpImage} />
+                        </TouchableOpacity>
+                        <View style={{marginLeft: 11}}>
+                            <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                                <Text style={styles.txtBrand}>{product_name}</Text>
+                                <TouchableOpacity style={{marginTop: 7}} onPress={() => {
+                                    this.remove(product_id, color, size, price)
+                                }}>
+                                    <Text style={{color:'red'}}>Hapus</Text>
+                                </TouchableOpacity>
+                            </View> 
+                            <View style={styles.containerSpec}>
+                                <Text>Color : <Text>{color}</Text></Text>
+                                <Text>Size : <Text>{size}</Text></Text>
+                            </View>
+                            <View style={{flexDirection: 'row', marginTop: 14, alignItems: 'center', width: '100%'}}>
+                                <View style={{flexDirection: 'row', width: 130, alignItems: 'center'}}>
+                                    <TouchableOpacity style={styles.circle} onPress={() => {
+                                        this.mines(product_id, color, size, price, qty)
+                                    }}>
+                                        <Text>-</Text>
+                                    </TouchableOpacity>
+                                    <Text style={{paddingHorizontal: 16}}>{qty}</Text>
+                                    <TouchableOpacity style={styles.circle} onPress={() => {
+                                       this.plus(product_id, color, size, price)
+                                    }}>
+                                        <Text>+</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <View>
+                                    <Text>Rp. {this.toPrice(price * qty)}</Text>
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+
+                )
+            })}
+            </>
+        }
         return(
             <View style={{flex:1}}>
                 <View style={{height: 50, padding: 14,alignItems: 'flex-end', width: '100%'}}>
@@ -62,46 +136,16 @@ class Bag extends Component{
                         <View>
                             <Text style={styles.titleScreen}>My Bag</Text>
                         </View>
-                        {transaction && transaction.map(({product_name, size, color, quantity, price, status, product_img}, index) => {
-                             let httpImage =  { uri : API_URL + product_img}
-                            return (
-                                <View style={styles.cardBag} key={index}>
-                                    <TouchableOpacity>
-                                        <Image style={styles.img} source={httpImage} />
-                                    </TouchableOpacity>
-                                    <View style={{marginLeft: 11}}>
-                                        <Text style={styles.txtBrand}>{product_name}</Text>
-                                        <View style={styles.containerSpec}>
-                                            <Text>Color : <Text>{color}</Text></Text>
-                                            <Text>Size : <Text>{size}</Text></Text>
-                                        </View>
-                                        <View style={{flexDirection: 'row', marginTop: 14, alignItems: 'center', width: '100%'}}>
-                                            <View style={{flexDirection: 'row', width: 130, alignItems: 'center'}}>
-                                                <TouchableOpacity style={styles.circle}>
-                                                    <Text>-</Text>
-                                                </TouchableOpacity>
-                                                <Text style={{paddingHorizontal: 16}}>{quantity}</Text>
-                                                <TouchableOpacity style={styles.circle}>
-                                                    <Text>+</Text>
-                                                </TouchableOpacity>
-                                            </View>
-                                            <View>
-                                                <Text>Rp. {price}</Text>
-                                            </View>
-                                        </View>
-                                    </View>
-                                </View>
-                            )
-                        })}
+                        {thisBag}
                     </ScrollView>
                 </View>
                 <View style={styles.btmNav}>
                     <View style={{flexDirection: 'row', justifyContent: 'space-around', marginTop: 30}}>
                         <Text>Total Amount : </Text>
-                        <Text>Rp.100.000</Text>
+                        <Text>Rp. {this.toPrice(this.props.bag.totalAmmount)}</Text>
                     </View>
                     <View style={{alignItems:'center'}}>
-                        <TouchableOpacity style={styles.btnCheckout} onPress={() => {
+                        <TouchableOpacity activeOpacity={0.5} style={styles.btnCheckout} onPress={() => {
                             this.props.navigation.navigate('Checkout')
                         }}>
                             <Text style={{color: 'white'}}>CHECK OUT</Text>
@@ -118,7 +162,8 @@ const styles = StyleSheet.create({
     titleScreen: {
         fontSize: 34,
         fontWeight: 'bold',
-        marginBottom: 24
+        marginBottom: 24,
+        alignSelf: 'center'
     },
     cardBag : {
         height: 104, 
@@ -197,9 +242,9 @@ const styles = StyleSheet.create({
     }
 })
 
-const mapStateToProps = ({auth}) => {
+const mapStateToProps = ({auth, bag}) => {
     return {
-        auth
+        auth,bag
     }
 }
 

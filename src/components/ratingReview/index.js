@@ -37,6 +37,7 @@ export class RatingReview extends Component {
       }
     
     handleSubmit = (rating,modalVisible) => {
+        const id =  this.props.route.params[0]
         const data = { 
             user_id :this.props.id,
             rating : this.state.ratingPrdct,
@@ -49,7 +50,7 @@ export class RatingReview extends Component {
         .then((data) => {
             //console.log(data)
             //alert("Review Berhasil DIkirim")
-            this.props.navigation.goBack()
+            this.props.navigation.push('Detail', id)
         })
         .catch((err) => {
             console.log(err)
