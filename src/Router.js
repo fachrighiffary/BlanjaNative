@@ -14,6 +14,7 @@ import Checkout from './components/bag/checkout';
 import ShippingAddress from './components/bag/shipaddress';
 import Success from './components/bag/success';
 import RatingReview from './components/ratingReview';
+import ChatRoom from './components/detailProduct/chatRoom';
 
 
 const Stack = createStackNavigator();
@@ -78,7 +79,14 @@ const Router = () => {
         options = {{
           headerShown :false
         }} />
+        <Stack.Screen
+        name="ChatRoom"
+        component={ChatRoom}
+        options = {{
+          headerShown :false
+        }} />
       </Stack.Navigator>
+      
     </NavigationContainer>
   )
 }

@@ -75,7 +75,7 @@ export class DetailProd extends Component {
     }
    
     render() {
-        console.log(this.props.auth.id)
+        //console.log(this.props.auth.id)
         const channel = 'notif';
         const {id_product, product_name, product_img, product_desc, total_rating, product_price, product_size, product_color, product_qty, store_name, product_condition, index} = this.props
         const {size, color, imgProd} = this.state
@@ -155,8 +155,12 @@ export class DetailProd extends Component {
                             </TouchableOpacity>
                         </View>
                         <View style={{borderWidth: 1}}></View>
-                        <TouchableOpacity style={styles.detailDtl}>
-                            <Text>Shipping Info</Text>
+                        <TouchableOpacity 
+                        style={styles.detailDtl} 
+                        onPress={() => {
+                            this.props.navigation.navigate('ChatRoom')
+                        }}>
+                            <Text>Chat Seller</Text>
                             <Image source={Go} />
                         </TouchableOpacity>
 

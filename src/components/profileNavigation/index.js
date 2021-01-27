@@ -2,14 +2,15 @@ import React, { Component } from 'react'
 import { Text, View } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack';
 import Profile from '../profile';
-import MyOrder from '../profile/myOrder';
-import ShippingAddress from '../profile/shipAddress';
+import MyOrder from '../profile/order/myOrder';
+import ShippingAddress from '../profile/address/shipAddress';
 import Setting from '../profile/setting';
-import EditAddress from '../profile/EditAddress';
-import AddAddress from '../profile/AddAddress';
+import EditAddress from '../profile/address/EditAddress';
+import AddAddress from '../profile/address/AddAddress';
 import MyProduct from '../profile/product/MyProduct';
 import AddProduct from '../profile/product/AddProduct';
 import EditProduct from '../profile/product/EditProduct';
+import OrderDetail from '../profile/order/orderDetail';
 
 const Stack = createStackNavigator();
 
@@ -65,6 +66,13 @@ export class ProfileNavigation extends Component {
                 <Stack.Screen 
                 name='EditProduct' 
                 component={EditProduct}
+                options={{
+                headerShown: false,
+                }}
+                />
+                <Stack.Screen 
+                name='OrderDetail' 
+                component={OrderDetail}
                 options={{
                 headerShown: false,
                 }}

@@ -10,7 +10,7 @@ const bagReducer = (prevState = initialState,action) => {
 
         switch (action.type){
             case "ADD_ITEMS":
-                console.log(action.data.product_id)
+                //console.log(action.data.product_id)
                 let newItem = action.data
                 const inCart = prevState.mybag.find(({ product_id, color, size }) =>
                     product_id === newItem.product_id && color === newItem.color && size === newItem.size ? true : false

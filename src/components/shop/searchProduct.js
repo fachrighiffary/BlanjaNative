@@ -55,10 +55,13 @@ export class SearchProduct extends Component {
                         <Image source={IconBack} />
                     </TouchableOpacity>
                     <View style={styles.input}>
-                        <TouchableOpacity onPress={this.getData}>
+                        <TouchableOpacity >
                             <Image source={Search} />
                         </TouchableOpacity>
                         <Input 
+                        onSubmitEditing = { () => {
+                            this.getData()
+                        }}
                         style={{marginLeft: 8}} 
                         placeholder="Search"
                         name="search"

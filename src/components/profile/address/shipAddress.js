@@ -2,7 +2,7 @@ import axios from 'axios'
 import React, { Component } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler'
-import { Search } from '../../assets'
+import { Search } from '../../../assets'
 import {API_URL} from "@env"
 import { connect } from 'react-redux'
 
