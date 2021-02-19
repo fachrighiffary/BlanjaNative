@@ -11,17 +11,28 @@ export class RatingProduct extends Component {
             a += i
         }
         let lop = a.split('')
+        let allRating
+        if(total_rating === 0){
+            allRating = 
+            <>
+                <Image source={Star0} />
+                <Image source={Star0} />
+                <Image source={Star0} />
+                <Image source={Star0} />
+                <Image source={Star0} />
+            </>
+        }else{
+            allRating = 
+            <>
+                {lop.map((id) => {
+                    return <Image source={Star} key={id}/>
+                })}
+            </>
+        }
         
         return (
             <View style={{flexDirection: 'row', marginTop: 8}}>
-                {/* <Image source={Star0} />
-                <Image source={Star0} />
-                <Image source={Star0} />
-                <Image source={Star0} />
-                <Image source={Star0} /> */}
-                {lop.map((id) => {
-                        return <Image source={Star} key={id}/>
-                    })}
+                {allRating}                
                 <Text style={{fontSize: 10, marginLeft: 3, color:'#9B9B9B'}}>({total_rating})</Text>
             </View>
         )

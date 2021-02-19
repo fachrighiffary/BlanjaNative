@@ -1,38 +1,65 @@
+import axios from 'axios'
 import { Input } from 'native-base'
-import React from 'react'
+import React, {Component } from 'react'
 import { View, Text, StyleSheet, Image } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { IconBack, IconNext } from '../../../assets'
+import { API_URL } from "@env"
 
 
-const ForgotPassword = ({navigation}) => {
-    return (
-        <View style={styles.container}>
-            <TouchableOpacity onPress={() => {
-                navigation.goBack()
-            }}>
-                <Image source={IconBack} />
-            </TouchableOpacity>
-            <View style={styles.rowTitle}>
-                <Text style={styles.textTitle}>Forgot Password</Text>
-            </View>
-            <View style={styles.containerForm}>
-                <View style={{width: 343}}>
-                    <Text>Please, enter your email address. You will receive a link to create a new password via email.</Text>
-                </View>
-                <View style={styles.input}>
-                    <Input placeholder='Email' type="email" />
-                </View>
-            </View>
-            <View style={{alignItems: 'center', marginTop: 32 }}>
-                <TouchableOpacity style={styles.btnLogin} onPress={() => {
-                    navigation.navigate('Login')
+class ForgotPassword extends Component{
+    constructor(){
+        super();
+        this.state = {
+            email : ''
+        }
+    }
+
+    handleSubmit = () => {
+        const data = {
+            email :  this.state.email
+        }
+        axios.post(API_URL + '/auth/forgot-password', data)
+        .then((res) => {
+            console.log(res)
+            this.props.navigation.navigate('getOtp', this.state.email)
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+    }
+
+    render() {
+        const {navigation} = this.props
+        return(
+            <View style={styles.container}>
+                <TouchableOpacity onPress={() => {
+                    navigation.goBack()
                 }}>
-                    <Text style={{color: 'white'}}>Send</Text>
+                    <Image source={IconBack} />
                 </TouchableOpacity>
+                <View style={styles.rowTitle}>
+                    <Text style={styles.textTitle}>Forgot Password</Text>
+                </View>
+                <View style={styles.containerForm}>
+                    <View style={{width: 343}}>
+                        <Text>Please, enter your email address. You will receive a link to create a new password via email.</Text>
+                    </View>
+                    <View style={styles.input}>
+                        <Input 
+                        placeholder='Email' 
+                        name="email" 
+                        onChangeText={(text) => { this.setState({ email: text }) }} />
+                    </View>
+                </View>
+                <View style={{alignItems: 'center', marginTop: 32 }}>
+                    <TouchableOpacity style={styles.btnLogin} onPress={this.handleSubmit}>
+                        <Text style={{color: 'white'}}>Send</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-        </View>
-    )
+        )
+    }
 }
 const styles = StyleSheet.create({
     container : {

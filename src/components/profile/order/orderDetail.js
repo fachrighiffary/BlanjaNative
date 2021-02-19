@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, Image } from 'react-native'
 import {API_URL} from "@env"
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import { IconBack, Product4, Search } from '../../../assets'
+import { connect } from 'react-redux'
 
 class OrderDetail extends Component {
     toPrice = (x) => {
@@ -24,7 +25,7 @@ class OrderDetail extends Component {
         axios
         .get(API_URL + '/transaction/detail/' + id)
         .then((data) => {
-            //console.log(data.data.data)
+            console.log(data.data.data)
             this.setState({
                 detailOrder : data.data.data,
                 totalOrder : data.data.data.length,
@@ -33,6 +34,34 @@ class OrderDetail extends Component {
         })
         .catch((response) => {
             console.log(response.data)
+        })
+    }
+    submitUpdate = () => {
+        const data = {
+            status : 'On Delivery',
+        }
+        const id = this.props.route.params[6]       
+        axios.patch(API_URL + '/transaction/' + id, data)
+        .then((res) => {
+            console.log(res)
+            this.props.navigation.replace('MyOrder')
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+    }
+    submitUpdateBuyer = () => {
+        const data = {
+            status : 'Delivered',
+        }
+        const id = this.props.route.params[6]       
+        axios.patch(API_URL + '/transaction/' + id, data)
+        .then((res) => {
+            console.log(res)
+            this.props.navigation.replace('MyOrder')
+        })
+        .catch((err) => {
+            console.log(err)
         })
     }
 
@@ -47,13 +76,43 @@ class OrderDetail extends Component {
         const totalAmmount = this.props.route.params[2]
         const date = this.props.route.params[3]
         const status = this.props.route.params[4]
+        const ekspedisi = this.props.route.params[5]
         const {detailOrder, totalOrder, address}  = this.state
-
+        const {auth} = this.props
+        console.log(auth)
+        let btnProcess
+        if(auth.level === 1){
+            if(status === 'Waiting'){
+                btnProcess = 
+                <>
+                <TouchableOpacity activeOpacity={0.5} style={styles.btnupdate} onPress={() => {
+                        this.submitUpdate()
+                        
+                    }}>
+                        <Text style={{color: 'white'}}>Proses Pesanan</Text>
+                </TouchableOpacity>
+                </>
+            }else{
+                btnProcess = null
+            }
+        }else{
+            if(status === 'On Delivery'){
+                btnProcess = 
+                <TouchableOpacity activeOpacity={0.5} style={styles.btnupdate} onPress={() => {
+                    this.submitUpdateBuyer()
+                        
+                    }}>
+                        <Text style={{color: 'white'}}>Terima Pesanan</Text>
+                </TouchableOpacity>
+            }else{
+                btnProcess = null
+            }
+        }
         return (
             <View style={{ paddingHorizontal: 16}}> 
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => {
-                        this.props.navigation.goBack()
+                        this.props.navigation.replace('MyOrder')
                     }}>
                         <Image source={IconBack} />
                     </TouchableOpacity>
@@ -62,7 +121,7 @@ class OrderDetail extends Component {
                         <Image source={Search} />
                     </TouchableOpacity>
                 </View>
-                <ScrollView showsVerticalScrollIndicator={false}>
+                <ScrollView showsVerticalScrollIndicator={false} style={{height: 600}}>
                     <View style={{flexDirection: 'row',justifyContent: 'space-between', marginTop: 30}}>
                         <Text style={{fontSize: 16}}>Order {order}</Text>
                         <Text style={{fontSize: 14, color: 'grey'}}>{date.split('T')[0]}</Text>
@@ -71,34 +130,34 @@ class OrderDetail extends Component {
                         <Text style={{fontSize: 14, color: 'grey'}}>Tracking number :  
                             <Text style={{fontSize: 14, color: 'black'}}> XXXXX-{trackingNUmber.split('-')[1]}</Text>
                         </Text>
-                        <Text style={{fontSize: 14, color: 'green'}}>{status}</Text>
+                        <Text style={{fontSize: 14, color: status === 'Delivered' ? 'green' : '#FFA113'}}>{status}</Text>
                     </View>
                     <View style={{marginTop: 16}}>
                         <Text>{totalOrder} Items</Text>
                     </View>
-                    {detailOrder && detailOrder.map(({product_img, product_name, color, size, qty, price}, index) => {
+                    {detailOrder && detailOrder.map(({id,product_img, product_name, color, size, qty, price}, index) => {
                         let httpImage = { uri : API_URL + product_img}
                         return(
-                            <View style={styles.card} key={index}>
-                                <Image style={styles.imgProduct} source={httpImage}/>
-                                <View style={{paddingTop: 11, paddingLeft: 11}}>
-                                    <Text style={{fontSize: 16, fontWeight: 'bold'}}>{product_name}</Text>
-                                    <View style={{flexDirection: 'row', width: 130, justifyContent: 'space-between', alignItems: 'center',  marginTop: 9}}>
-                                        <Text style={{fontSize: 11, color: 'grey'}}>Color: 
-                                            <Text style={{fontSize: 11, color: 'black'}}>{color}</Text>
-                                        </Text>
-                                        <Text style={{fontSize: 11, color: 'grey'}}>Size: 
-                                            <Text style={{fontSize: 11, color: 'black'}}>{size}</Text>
-                                        </Text>
-                                    </View>
-                                    <View style={{flexDirection: 'row', width: 200, justifyContent: 'space-between', marginTop: 10}}>
-                                        <Text style={{fontSize: 11, color: 'grey'}}>Units : 
-                                            <Text>{qty}</Text>
-                                        </Text>
-                                        <Text style={{fontSize: 14, fontWeight: 'bold'}}>Rp. {this.toPrice(price)}</Text>
+                                <View style={styles.card} key={index}>
+                                    <Image style={styles.imgProduct} source={httpImage}/>
+                                    <View style={{paddingTop: 11, paddingLeft: 11}}>
+                                        <Text style={{fontSize: 16, fontWeight: 'bold'}}>{product_name}</Text>
+                                        <View style={{flexDirection: 'row', width: 130, justifyContent: 'space-between', alignItems: 'center',  marginTop: 9}}>
+                                            <Text style={{fontSize: 11, color: 'grey'}}>Color: 
+                                                <Text style={{fontSize: 11, color: 'black'}}>{color}</Text>
+                                            </Text>
+                                            <Text style={{fontSize: 11, color: 'grey'}}>Size: 
+                                                <Text style={{fontSize: 11, color: 'black'}}>{size}</Text>
+                                            </Text>
+                                        </View>
+                                        <View style={{flexDirection: 'row', width: 200, justifyContent: 'space-between', marginTop: 10}}>
+                                            <Text style={{fontSize: 11, color: 'grey'}}>Units : 
+                                                <Text>{qty}</Text>
+                                            </Text>
+                                            <Text style={{fontSize: 14, fontWeight: 'bold'}}>Rp. {this.toPrice(price)}</Text>
+                                        </View>
                                     </View>
                                 </View>
-                            </View>
                         )
                     })}
                     <View style={{marginTop: 34}}>
@@ -127,7 +186,7 @@ class OrderDetail extends Component {
                             <Text>Delivery method: </Text>
                         </View>
                         <View style={{maxWidth: 215, maxHeight: 50}}>
-                            <Text style={{color: 'black', fontWeight: 'bold'}}>FedEx, 3 days, 15$</Text>
+                            <Text style={{color: 'black', fontWeight: 'bold'}}>{ekspedisi.toUpperCase()}</Text>
                         </View>
                     </View>
 
@@ -140,7 +199,7 @@ class OrderDetail extends Component {
                         </View>
                     </View>
 
-                    <View style={{marginTop: 15, flexDirection: 'row', marginBottom: 90}}>
+                    <View style={{marginTop: 15, flexDirection: 'row', marginBottom: 30}}>
                         <View style={{width: 122}}>
                             <Text>Total Amount: </Text>
                         </View>
@@ -148,8 +207,22 @@ class OrderDetail extends Component {
                             <Text style={{color: 'black', fontWeight: 'bold'}}>{this.toPrice(totalAmmount)}</Text>
                         </View>
                     </View>
-
-                    
+                    {/* {auth.level === 1 && status === 'Waiting' ? (
+                        <TouchableOpacity activeOpacity={0.5} style={styles.btnupdate} onPress={() => {
+                                this.submitUpdate()
+                               
+                            }}>
+                                <Text style={{color: 'white'}}>Proses Pesanan</Text>
+                        </TouchableOpacity>
+                    ) : (
+                        <TouchableOpacity activeOpacity={0.5} style={styles.btnupdate} onPress={() => {
+                            this.submitUpdate()
+                           
+                        }}>
+                            <Text style={{color: 'white'}}>Terima Pesanan</Text>
+                    </TouchableOpacity>
+                    )} */}
+                    {btnProcess}
                 </ScrollView>
             </View>
         )
@@ -183,8 +256,27 @@ const styles = StyleSheet.create({
         width: 104,
         borderTopLeftRadius: 8,
         borderBottomLeftRadius: 8
+    },
+    btnupdate: {
+        marginTop: 15,
+        justifyContent: 'center', 
+        alignItems: 'center',  
+        marginBottom: 30, 
+        alignSelf: 'center', 
+        height: 50, 
+        width: 200, 
+        backgroundColor: '#DB3022', 
+        borderRadius: 10
     }
 
 })
 
-export default OrderDetail
+const mapStateToProps = ({auth}) => {
+    return {
+        auth
+    }
+}
+
+
+
+export default connect(mapStateToProps)(OrderDetail)

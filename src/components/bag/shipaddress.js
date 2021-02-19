@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
 import React, { Component } from 'react'
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, Text, View, ToastAndroid } from 'react-native'
 import { ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler'
 import { Search } from '../../assets'
 import {API_URL} from "@env"
@@ -18,6 +18,12 @@ export class ShippingAddress extends Component {
             color: false
         }
     }
+    showToast = () => {
+        ToastAndroid.show("Address Selected", ToastAndroid.SHORT);
+      };
+    showToastalert = () => {
+        ToastAndroid.show("Select address first", ToastAndroid.SHORT);
+      };
 
     getAddress = () => {
         const id = this.props.auth.id
@@ -74,10 +80,12 @@ export class ShippingAddress extends Component {
 
     setActiveAddress = () => {
         if(this.state.selectedAddress === null){
-            alert('Select your address first')
+            this.showToastalert()
         }else{
             this.props.dispatch(setAddress(this.state.selectedAddress))
             this.props.navigation.push('Checkout')
+            this.showToast()
+            
         }
     }
 

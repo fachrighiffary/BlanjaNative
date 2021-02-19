@@ -69,7 +69,7 @@ export class DetailProduct extends Component {
                         <Image source={Share} />
                    </TouchableOpacity>
                </View>
-               {product && product.map(({id, product_name, product_img, product_desc, product_condition,total_rating , product_price, product_qty, product_size, product_color, store_name}, index) => {
+               {product && product.map(({id, user_id, product_name, product_img, product_desc, product_condition,total_rating , product_price, product_qty, product_size, product_color, store_name}, index) => {
                         return <DetailProd 
                         id_product = {id}
                         product_name={product_name}
@@ -83,6 +83,7 @@ export class DetailProduct extends Component {
                         product_condition={product_condition}
                         total_rating={total_rating}
                         key={index}
+                        seller_id = {user_id}
                         navigation={this.props.navigation} 
                         />
                     })}

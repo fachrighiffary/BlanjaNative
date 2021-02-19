@@ -11,6 +11,7 @@ import Shop from '../shop'
 import ProfileNavigation from '../profileNavigation';
 import ShopStackScreen from '../shopStackScreen';
 import { connect } from 'react-redux';
+import HomeStackScreen from '../home/homeStackScreen';
 
 const Tab = createBottomTabNavigator()
 
@@ -44,8 +45,8 @@ const TabNavigator = (props) => {
             }}
             >
             <Tab.Screen 
-            name="Home" 
-            component={Home}
+            name="HomeStackScreen" 
+            component={HomeStackScreen}
             options={{
                 tabBarLabel: 'Home',
                 tabBarIcon: ({ color, size }) => (

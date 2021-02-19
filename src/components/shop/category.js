@@ -158,6 +158,7 @@ export class Category extends Component {
                                     colorLow: 'black',
                                     sort: '?popular=desc'
                                    })
+                                   this.setModalVisible(!modalVisible)
                                 }} style={{...styles.sortButton, backgroundColor: this.state.backgroundColorPop}} >
                                     <Text style={{fontSize: 16, fontWeight: '500', color: this.state.colorPop}}>Popular</Text>
                                 </Button>
@@ -175,6 +176,7 @@ export class Category extends Component {
                                     colorLow: 'black',
                                     sort: '?new=desc'
                                    })
+                                   this.setModalVisible(!modalVisible)
                                 }} style={{...styles.sortButton, backgroundColor: this.state.backgroundColorNew}} >
                                     <Text style={{fontSize: 16, fontWeight: '500', color: this.state.colorNew}}>Newest</Text>
                                 </Button>
@@ -192,6 +194,7 @@ export class Category extends Component {
                                     colorLow: 'black',
                                     sort: '?review=desc'
                                    })
+                                   this.setModalVisible(!modalVisible)
                                 }} style={{...styles.sortButton, backgroundColor: this.state.backgroundColorRev}} >
                                     <Text style={{fontSize: 16, fontWeight: '500', color: this.state.colorRev}}>Customer review</Text>
                                 </Button>
@@ -207,8 +210,9 @@ export class Category extends Component {
                                     colorHigh: 'white',
                                     backgroundColorLow: 'white',
                                     colorLow: 'black',
-                                    sort: '?price=desc'
+                                    sort: '?price=asc'
                                    })
+                                   this.setModalVisible(!modalVisible)
                                 }} style={{...styles.sortButton, backgroundColor: this.state.backgroundColorHigh}} >
                                     <Text style={{fontSize: 16, fontWeight: '500', color: this.state.colorHigh}}>Price: lowest to high</Text>
                                 </Button>
@@ -224,8 +228,9 @@ export class Category extends Component {
                                     colorHigh: 'black',
                                     backgroundColorLow: 'red',
                                     colorLow: 'white',
-                                    sort: '?price=asc'
+                                    sort: '?price=desc'
                                    })
+                                   this.setModalVisible(!modalVisible)
                                 }} style={{...styles.sortButton, backgroundColor: this.state.backgroundColorLow}} >
                                     <Text style={{fontSize: 16, fontWeight: '500', color: this.state.colorLow}}>Price: highest to low</Text>
                                 </Button>   

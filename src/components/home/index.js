@@ -13,7 +13,9 @@ const Home = ({navigation, route}) => {
                 <Image source={Image1} style={styles.imgHeader}/>
                 <Text style={styles.txtImg}>Street Clotes</Text>
                 <View style={styles.contBell}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => {
+                        navigation.navigate('Notification')
+                    }}>
                         <Image source={Bell} />
                     </TouchableOpacity>
                 </View>

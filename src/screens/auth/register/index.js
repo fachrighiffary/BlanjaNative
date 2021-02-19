@@ -1,8 +1,8 @@
 import axios from 'axios'
-import { Input } from 'native-base'
+import { Input,Button } from 'native-base'
 import React, {Component, useState} from 'react'
-import { View, Text, StyleSheet, Image } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { View, Text, StyleSheet, Image, Modal } from 'react-native'
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import { IconBack, IconNext } from '../../../assets'
 import {API_URL} from "@env"
  
@@ -14,6 +14,7 @@ class Register extends Component{
         this.state = {
             username: '',
             email: '',
+            phone_number: '',
             password:'',
             store_name: '',
             level: '',
@@ -25,15 +26,17 @@ class Register extends Component{
         }
     }
 
+ 
     handleSubmit = () => {
         const data = {
             username    : this.state.username,
             email       : this.state.email,
+            phone_number: this.state.phone_number,
             store_name  : this.state.store_name,
             password    : this.state.password,
             level_id    : this.state.level
         }
-        if(this.state.username === '' || this.state.email === '' || this.state.password === '' || this.state.level === '' ||  this.state.email === ''){
+        if(this.state.username === '' || this.state.email === '' || this.state.password === '' || this.state.level === '' ||  this.state.level_id === '' || this.state.phone_number === ''){
             this.setState({
                 errorForm: 'Semua Kolom harus diisi \n Seller / costumer harus dipilih'
             })
@@ -41,8 +44,8 @@ class Register extends Component{
             axios
             .post(API_URL + '/auth/register', data)
             .then((data) => {
-                alert(data.data.data.msg)
-                this.props.navigation.replace('Login')
+                // alert(data.data.data.msg)
+                this.props.navigation.replace('checkOtp', this.state.email)
             })
             .catch((err) => {
                 this.setState({
@@ -55,9 +58,21 @@ class Register extends Component{
 
 
     render(){
-        let {email, username, password,  store_name} = this.state        
+        let {email, username, password,  store_name, phone_number} = this.state  
+        let storeName;
+        if(this.state.level == 1){
+            storeName = 
+            <View style={styles.input}>
+                <Input 
+                placeholder='Store Name'
+                value={store_name} 
+                onChangeText={(text) => { this.setState({ store_name: text }) }} 
+                />
+            </View>
+        }
+        
         return(
-            <View style={styles.container}>
+            <ScrollView style={styles.container}>
                 <View style={styles.rowTitle}>
                     <Text style={styles.textTitle}>Sign Up</Text>
                 </View>
@@ -67,7 +82,7 @@ class Register extends Component{
                             justifyContent: 'center',
                             alignItems: 'center',
                             width: 170,
-                            height: 48,
+                            height: 47,
                             backgroundColor:this.state.backColorsCus,
                             borderTopLeftRadius: 10,
                             borderBottomLeftRadius: 10
@@ -89,7 +104,7 @@ class Register extends Component{
                         justifyContent: 'center',
                         alignItems: 'center',
                         width: 170,
-                        height: 48,
+                        height: 47,
                         backgroundColor:this.state.backColorsell,
                         borderTopRightRadius: 10,
                         borderBottomRightRadius: 10
@@ -117,19 +132,21 @@ class Register extends Component{
                     </View>
                     <View style={styles.input}>
                         <Input 
+                        placeholder='Phone Number'
+                        value={phone_number} 
+                        keyboardType='phone-pad'
+                        onChangeText={(text) => { this.setState({ phone_number: text }) }} 
+                        />
+                    </View>
+                    <View style={styles.input}>
+                        <Input 
                         placeholder='Email' 
                         name="email" 
                         value={email} 
                         onChangeText={(text) => { this.setState({ email: text }) }} 
                         />
                     </View>
-                    <View style={styles.input}>
-                        <Input 
-                        placeholder='Store Name'
-                        value={store_name} 
-                        onChangeText={(text) => { this.setState({ store_name: text }) }} 
-                        />
-                    </View>
+                    {storeName}
                     <View style={styles.input}>
                         <Input 
                         secureTextEntry={true} 
@@ -151,11 +168,11 @@ class Register extends Component{
                     <Text style={{color: 'red', textAlign: 'center'}}>{this.state.errorForm}</Text>
                 </View>
                 <View style={{alignItems: 'center' }}>
-                    <TouchableOpacity style={styles.btnLogin} onPress={this.handleSubmit}>
+                    <TouchableOpacity style={styles.btnLogin}  onPress={this.handleSubmit}>
                         <Text style={{color: 'white'}}>Sign Up</Text>
                     </TouchableOpacity>
                 </View>
-            </View>
+            </ScrollView>
         )
     }
 }
@@ -214,6 +231,49 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center'
     },
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 22
+      },
+      modalView: {
+        height: 200,
+        width: 300,
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5
+      },
+      closeButton: { 
+        backgroundColor: "#DB3022" ,
+        height: 40, 
+        width: 100,
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2,
+        justifyContent: 'center',
+        alignItems: 'center'
+      },
+      textStyle: {
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center"
+      },
+      modalText: {
+        marginBottom: 15,
+        textAlign: "center",
+        fontSize: 30
+      }
 
 
 })

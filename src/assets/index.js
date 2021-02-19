@@ -15,6 +15,10 @@ import Sort from './icon/sort.png'
 import Bell from './icon/bell.png'
 import IconCamera from './icon/camera.png'
 import IconGalery from './icon/gelery.png'
+import IconSend from './icon/iconSend.png'
+import Notif from './icon/notif.png'
+import IconTrash from './icon/trash.png'
+
 
 import Image1 from './image/home1.jpg'
 import Product1 from './image/product1.png'
@@ -67,5 +71,8 @@ export {
     Sort,
     Bell,
     IconCamera,
-    IconGalery
+    IconGalery,
+    IconSend,
+    Notif,
+    IconTrash
 };

@@ -1,7 +1,7 @@
 import { CheckBox } from 'native-base'
 import React, {Component} from 'react'
-import { View, Text, StyleSheet, Image } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { View, Text, StyleSheet, Image, ToastAndroid } from 'react-native'
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import { connect } from 'react-redux'
 import { Gopay, MasterCard, PosIndo } from '../../assets'
 import {API_URL} from "@env"
@@ -9,6 +9,7 @@ import axios from 'axios'
 import {orderItems} from '../../public/redux/ActionCreators/Bag'
 import PushNotification from 'react-native-push-notification';
 import {showNotification, handleCancel, handleScheduledNotification} from '../../notification.android'
+import DropDownPicker from 'react-native-dropdown-picker'
 
 const channel = 'notif';
 const shippingPrice = 15000;
@@ -18,6 +19,10 @@ class Checkout extends Component{
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
 
+    showToast = () => {
+        ToastAndroid.show("Select your address payment and expedisi", ToastAndroid.SHORT);
+      };
+
 
     state = {
         isCheckedMaster: false,
@@ -26,6 +31,7 @@ class Checkout extends Component{
         selectedPayment: 0,
         backgroundColor: false,
         address: [],
+        ekspedisi: ''
     }
     checkedMaster = () => {
         this.setState({
@@ -83,7 +89,7 @@ class Checkout extends Component{
             const Order = {
                 trxId : `TRX${this.props.bag.trxId}`,
                 payment : payment,
-                address: this.props.address.activeAddress 
+                address: this.props.address.activeAddress, 
             }
             if(this.props.dispatch(orderItems(Order))){
                 const newTransaction = {
@@ -94,18 +100,31 @@ class Checkout extends Component{
                     qty: this.props.bag.mybag.length,
                     total: this.props.bag.totalAmmount + shippingPrice,
                     trackingNumber: `XXXXXXXXXXXXXXX-0${this.props.bag.trxId}`,
-                    status: 'Delivered'
+                    ekspedisi: this.state.ekspedisi,
+                    status: 'Waiting'
                 }
                 console.log('new transaction',newTransaction)
 
-                axios
-                .post(API_URL + '/transaction', newTransaction)
+                axios.post(API_URL + '/transaction', newTransaction)
                 .then((result) => {
                     axios.post(API_URL + '/transaction/itemOrder', this.props.bag.mybag)
                     .then((res) =>{
                         console.log(res)
                         showNotification('Notification', `Hai ${this.props.auth.name}, Transaksi berhasil, Tunggu pesanan kamu dikirim yaaa` , channel)
-                        this.props.navigation.navigate('Success')
+
+                        const data = {
+                            id_user : this.props.auth.id,
+                            message : `Hai ${this.props.auth.name}, Selmat transaksi anda telah berhasil dengan Kode transaksi ${Order.trxId}`,
+                        }
+                        axios.post(API_URL + '/notification/', data)
+                        .then((res) => {
+                            console.log(res.data.message)
+                            this.props.navigation.navigate('Success')
+                        })
+                        .catch(({response}) => {
+                            console.log(response)
+                        })
+                        
                     }).catch(({response}) =>{
                         console.log(response.data)
                     })
@@ -115,7 +134,7 @@ class Checkout extends Component{
                 })
             }
         }else{
-            alert('Harap lengkapi Alamat dan Payment')
+            this.showToast();
         }
     }
 
@@ -142,7 +161,7 @@ class Checkout extends Component{
     
 
     render(){
-        console.log('ini adaalah data bag ',this.props.bag.mybag)
+        console.log('ini adaalah user_id ',this.props.auth.id)
         const {navigation} = this.props
         const {address} = this.state
         let cardAddress;
@@ -174,65 +193,84 @@ class Checkout extends Component{
         }
         
         return(
-            <View>
-            <View style={{marginTop: 20}}>
-                <Text style={styles.txtTitle}>Shipping Address</Text>
-            </View>
-            {cardAddress}
-            <View style={{marginTop: 57}}>
-                <Text style={styles.txtTitle}>Payment</Text>
-            </View>
-            <View style={styles.payContainer}>
-                <View style={{flexDirection: 'row'}}>
-                    <View style={styles.bgIcon}>
-                        <Image style={{position: 'absolute'}} source={MasterCard} />
+            <ScrollView>
+                <View style={{marginTop: 20}}>
+                    <Text style={styles.txtTitle}>Shipping Address</Text>
+                </View>
+                {cardAddress}
+                <View style={{marginTop: 57}}>
+                    <Text style={styles.txtTitle}>Payment</Text>
+                </View>
+                <View style={styles.payContainer}>
+                    <View style={{flexDirection: 'row'}}>
+                        <View style={styles.bgIcon}>
+                            <Image style={{position: 'absolute'}} source={MasterCard} />
+                        </View>
+                        <Text style={{marginLeft: 17, marginTop: 7}}>MasterCard</Text>
                     </View>
-                    <Text style={{marginLeft: 17, marginTop: 7}}>MasterCard</Text>
+                    <CheckBox color="red"  checked={this.state.isCheckedMaster} onPress={this.checkedMaster}/>
                 </View>
-                <CheckBox color="red"  checked={this.state.isCheckedMaster} onPress={this.checkedMaster}/>
-            </View>
-            <View style={styles.payContainer}>
-                <View style={{flexDirection: 'row'}}>
-                    <View style={styles.bgIcon}>
-                        <Image style={{position: 'absolute'}} source={PosIndo} />
+                <View style={styles.payContainer}>
+                    <View style={{flexDirection: 'row'}}>
+                        <View style={styles.bgIcon}>
+                            <Image style={{position: 'absolute'}} source={PosIndo} />
+                        </View>
+                        <Text style={{marginLeft: 17, marginTop: 7}}>Pos Indonesia</Text>
                     </View>
-                    <Text style={{marginLeft: 17, marginTop: 7}}>Pos Indonesia</Text>
+                    <CheckBox  color="red" checked={this.state.isCheckedPost} onPress={this.checkedPost}/>
                 </View>
-                <CheckBox  color="red" checked={this.state.isCheckedPost} onPress={this.checkedPost}/>
-            </View>
-            <View style={styles.payContainer}>
-                <View style={{flexDirection: 'row'}}>
-                    <View style={styles.bgIcon}>
-                        <Image style={{position: 'absolute'}} source={Gopay} />
+                <View style={styles.payContainer}>
+                    <View style={{flexDirection: 'row'}}>
+                        <View style={styles.bgIcon}>
+                            <Image style={{position: 'absolute'}} source={Gopay} />
+                        </View>
+                        <Text style={{marginLeft: 17, marginTop: 7}}>Gopay</Text>
                     </View>
-                    <Text style={{marginLeft: 17, marginTop: 7}}>Gopay</Text>
+                    <CheckBox  color="red"  checked={this.state.isCheckedGopay} onPress={this.checkedGopay}/>
                 </View>
-                <CheckBox  color="red"  checked={this.state.isCheckedGopay} onPress={this.checkedGopay}/>
-            </View>
-            <View style={styles.btmSubmit}>
-                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                    <Text style={{color: 'grey'}}>Order : </Text>
-                    <Text>Rp. {this.toPrice(this.props.bag.totalAmmount)}</Text>
+                <View style={styles.payContainer}>
+                    <DropDownPicker
+                        items={[
+                            {label: 'JNE', value: 'jne', hidden: true},
+                            {label: 'TIKI', value: 'tiki'},
+                            {label: 'J&T', value: 'j&t'},
+                        ]}
+                        defaultValue={this.state.country}
+                        containerStyle={{height: 40}}
+                        style={{alignSelf: 'center', backgroundColor: '#fafafa', width: 350}}
+                        placeholder="Select Ekspedisi"
+                        itemStyle={{
+                            justifyContent: 'flex-start'
+                        }}
+                        dropDownStyle={{backgroundColor: '#fafafa'}}
+                        onChangeItem={item => this.setState({
+                            ekspedisi: item.value
+                        })}
+                    />
                 </View>
-                <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 15}}>
-                    <Text style={{color: 'grey'}}>Devlivery : </Text>
-                    <Text>Rp. {this.toPrice(shippingPrice)}</Text>
-                </View>
-                <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 15}}>
-                    <Text style={{color: 'grey'}}>Summary : </Text>
-                    <Text>Rp. {this.toPrice(shippingPrice + this.props.bag.totalAmmount)}</Text>
-                </View>
-                <TouchableOpacity onPress={this.submitOrder}>
-                    <View style={styles.btnSubmit}>
-                        <Text style={{color: 'white'}}>SUBMIT ORDER</Text>
+                <View style={styles.btmSubmit}>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                        <Text style={{color: 'grey'}}>Order : </Text>
+                        <Text>Rp. {this.toPrice(this.props.bag.totalAmmount)}</Text>
                     </View>
-                </TouchableOpacity>
-            </View>
-        </View>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 15}}>
+                        <Text style={{color: 'grey'}}>Devlivery : </Text>
+                        <Text>Rp. {this.toPrice(shippingPrice)}</Text>
+                    </View>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 15}}>
+                        <Text style={{color: 'grey'}}>Summary : </Text>
+                        <Text>Rp. {this.toPrice(shippingPrice + this.props.bag.totalAmmount)}</Text>
+                    </View>
+                    <TouchableOpacity onPress={this.submitOrder}>
+                        <View style={styles.btnSubmit}>
+                            <Text style={{color: 'white'}}>SUBMIT ORDER</Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
         )
     }
 }
- // navigation.navigate('Success')
 
 const styles = StyleSheet.create({
     container: {
