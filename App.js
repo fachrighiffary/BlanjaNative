@@ -1,13 +1,23 @@
 import React from 'react'
 import { View, Text } from 'react-native'
-import { Provider } from 'react-redux'
 import Router from './src/Router'
+
+//Redux
+import { Provider } from 'react-redux'
 import store from './src/public/redux/store'
+
+//Redux Persist
+import {PersistGate} from 'redux-persist/es/integration/react';
+import {persistStore} from 'redux-persist';
+const persistedStore = persistStore(store);
+
 
 const App = () => {
        return (
               <Provider store={store}>
-                     <Router />
+                     <PersistGate persistor={persistedStore} loading={null}>
+                            <Router />
+                     </PersistGate>
               </Provider>
        )
 }

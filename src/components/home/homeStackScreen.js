@@ -3,6 +3,7 @@ import { Text, View } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack';
 import Home from '.';
 import Notification from './notification';
+import ViewAll from './viewAll';
 
 const Stack = createStackNavigator();
 
@@ -19,6 +20,12 @@ export class HomeStackScreen extends Component {
                 <Stack.Screen 
                 name='Notification' 
                 component={Notification}
+                options={{
+                headerShown: false,
+                }}/>
+                <Stack.Screen 
+                name='ViewAll' 
+                component={ViewAll}
                 options={{
                 headerShown: false,
                 }}/>

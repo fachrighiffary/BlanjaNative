@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Image, StyleSheet, Text, Modal, View } from 'react-native'
+import { Image, StyleSheet, Text, Modal, View, ActivityIndicator, ToastAndroid } from 'react-native'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import { IconBack, IconCamera, IconGalery } from '../../../assets'
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -16,6 +16,7 @@ export class AddProduct extends Component {
         super(props);
         this.state = {
             product_name: '',
+            product_desc: '',
             category: '',
             product_price: '',
             product_qty: '',
@@ -26,12 +27,17 @@ export class AddProduct extends Component {
             images: null,
             product_img: [],
             taken_pic: {},
-            modalVisible: false
+            modalVisible: false,
+            loading: false
         }
     }
     setModalVisible = (visible) => {
         this.setState({ modalVisible: visible });
       }
+
+    showToast = () => {
+        ToastAndroid.show("You must fill all the field", ToastAndroid.SHORT);
+    };
 //  -----------------------------------------------------------------------   
     chooseFile = () => {
     ImagePicker.openPicker({
@@ -65,62 +71,67 @@ export class AddProduct extends Component {
 
 // ---------------------------------------------------
     handleUploadProduct = () => {
-        const config = {
-            headers: {
-                'x-access-token': 'Bearer ' + this.props.auth.token,
-                'Content-type': 'multipart/form-data',
-            },
-        };
-        const data = new FormData();
-        data.append('user_id', this.props.auth.id)
-        data.append('product_name', this.state.product_name)
-        data.append('category_id', this.state.category)
-        data.append('product_price', this.state.product_price)
-        data.append('product_qty', this.state.product_qty)
-        data.append('product_size', this.state.product_size)
-        data.append('product_color', this.state.product_color)
-        data.append('product_condition', this.state.condition)
-        if (Object.keys(this.state.taken_pic).length > 0) {
-            data.append('product_img', {
-                name: this.state.taken_pic.path.split('/').pop(),
-                type: this.state.taken_pic.mime,
-                uri:
-                    Platform.OS === 'android'
-                        ? this.state.taken_pic.path
-                        : this.state.taken_pic.path.replace('file://', ''),
+        if(this.state.product_img === []){
+            this.showToast()
+        }else{
+            const config = {
+                headers: {
+                    'x-access-token': 'Bearer ' + this.props.auth.token,
+                    'Content-type': 'multipart/form-data',
+                },
+            };
+            const data = new FormData();
+            data.append('user_id', this.props.auth.id)
+            data.append('product_name', this.state.product_name)
+            data.append('product_desc', this.state.product_desc)
+            data.append('category_id', this.state.category)
+            data.append('product_price', this.state.product_price)
+            data.append('product_qty', this.state.product_qty)
+            data.append('product_size', this.state.product_size)
+            data.append('product_color', this.state.product_color)
+            data.append('product_condition', this.state.condition)
+            if (Object.keys(this.state.taken_pic).length > 0) {
+                data.append('product_img', {
+                    name: this.state.taken_pic.path.split('/').pop(),
+                    type: this.state.taken_pic.mime,
+                    uri:
+                        Platform.OS === 'android'
+                            ? this.state.taken_pic.path
+                            : this.state.taken_pic.path.replace('file://', ''),
+                })
+            }
+            if (this.state.product_img[0]) {
+                for (let i = 0; i < this.state.product_img.length; i++) {
+                    data.append('product_img',
+                        {
+                            name: this.state.product_img[i].path.split('/').pop(),
+                            type: this.state.product_img[i].mime,
+                            uri:
+                                Platform.OS === 'android'
+                                    ? this.state.product_img[i].path
+                                    : this.state.product_img[i].path.replace('file://', ''),
+                        }
+                    );
+                }
+            }
+            console.log('ini adalah data dari data input',data)
+            axios
+            .post(API_URL + `/products` ,data , config)
+            .then((data) => {
+                console.log(data)
+                this.props.navigation.push("MyProduct")
+            })
+            .catch((err) => {
+                console.log(err.response.data)
+                this.showToast()
             })
         }
-        if (this.state.product_img[0]) {
-            for (let i = 0; i < this.state.product_img.length; i++) {
-                data.append('product_img',
-                    {
-                        name: this.state.product_img[i].path.split('/').pop(),
-                        type: this.state.product_img[i].mime,
-                        uri:
-                            Platform.OS === 'android'
-                                ? this.state.product_img[i].path
-                                : this.state.product_img[i].path.replace('file://', ''),
-                    }
-                );
-            }
-        }
-    console.log('ini adalah data dari data input',data)
-    axios
-    .post(API_URL + `/products` ,data , config)
-    .then((data) => {
-        console.log(data)
-        this.props.navigation.push("MyProduct")
-    })
-    .catch((err) => {
-        console.log(err.response.data)
-        alert('Data gagal Ditambahkan')
-    })
     } 
    
 
 
     render() {
-        const { modalVisible,product_img,taken_pic,product_name, category, product_price, product_qty, product_size, product_color, condition} = this.state;
+        const { modalVisible,product_img,taken_pic,product_name, category, product_price, product_qty, product_size, product_color, condition, product_desc, loading} = this.state;
         //console.log(this.state)
         let prevImgFromCamera;
         if (Object.keys(this.state.taken_pic).length > 0) {
@@ -149,6 +160,16 @@ export class AddProduct extends Component {
                             placeholder="input product name" 
                             value={product_name} 
                             onChangeText={(text) => { this.setState({ product_name: text }) }}
+                            />
+                        </View>
+                    </View>
+                    <View style={{marginBottom: 20}}>
+                        <Text style={{marginLeft: 7, fontSize: 18, marginBottom: 10}}>Product Description</Text>
+                        <View style={styles.input}>
+                            <Input 
+                            placeholder="input product desc" 
+                            value={product_desc} 
+                            onChangeText={(text) => { this.setState({ product_desc : text }) }}
                             />
                         </View>
                     </View>
@@ -281,14 +302,20 @@ export class AddProduct extends Component {
                         <View style={{width: 200, height: 100,justifyContent: 'space-between', flexDirection: 'row'}}>
                             <Button 
                             style={styles.modalPicker} 
-                            onPress={this.chooseFile}
+                            onPress={() => {
+                                this.setModalVisible(!modalVisible)
+                                this.chooseFile()
+                            }}
                             >
                                 <Image source={IconGalery} />
                                 <Text>Galery</Text>
                             </Button>
                             <Button 
                             style={styles.modalPicker}  
-                            onPress={this.takePicture}
+                            onPress={() => {
+                                this.takePicture()
+                                this.setModalVisible(!modalVisible)
+                            }}
                             >
                                 <Image source={IconCamera} />
                                 <Text>Camera</Text>
@@ -306,15 +333,23 @@ export class AddProduct extends Component {
                         </View>
                     </View>
                     </Modal>
-
-
-
-                    <TouchableOpacity 
-                    style={styles.btn}
-                    onPress={this.handleUploadProduct}
-                    >
-                            <Text style={{color: 'white', fontSize: 18}}>Save</Text>
-                    </TouchableOpacity>
+                    {!loading ? (
+                        <TouchableOpacity 
+                        style={styles.btn}
+                        onPress={() => {
+                            this.setState({
+                                loading: false
+                            })
+                            this.handleUploadProduct() 
+                        }}>
+                                <Text style={{color: 'white', fontSize: 18}}>Save</Text>
+                        </TouchableOpacity>
+                    ) : (
+                        <View 
+                        style={styles.btn}>
+                                <ActivityIndicator color="white" size="large"/>
+                        </View>
+                    )}
                 </View>
             </ScrollView>
         )

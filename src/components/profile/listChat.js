@@ -1,6 +1,6 @@
 import { Container, Content, Header } from 'native-base'
 import React, {useEffect, useState} from 'react'
-import { View, Text, StyleSheet, Image } from 'react-native'
+import { View, Text, StyleSheet, Image, ActivityIndicator } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import {useSelector} from 'react-redux'
 import { Go, IconBack } from '../../assets'
@@ -13,6 +13,8 @@ const ListChat = ({navigation}) => {
 
     const auth = useSelector((state) => state.auth)
     const [chatList, setChatList] = useState([])
+    const [loading, setLoading] = useState(false)
+    const [errMsg, setErrMsg] = useState('')
 
     const config = {
         headers: {
@@ -28,19 +30,23 @@ const ListChat = ({navigation}) => {
             axios.get(API_URL + '/chat/chatRoomSeller', config)
             .then((res) => {
                 // console.log('ini seller'.res.data.data)
+                setLoading(true)
                 setChatList(res.data.data)
             })
             .catch(({response}) => {
                 console.log(response)
+                setErrMsg('Belum ada chat')
             })
         }else{
             axios.get(API_URL + '/chat/chatRoomBuyer', config)
             .then((res) => {
                 // console.log('ini customer',res.data.data)
+                setLoading(true)
                 setChatList(res.data.data)
             })
             .catch(({response}) => {
                 console.log(response)
+                setErrMsg('Belum ada chat')
             })
         }
     }
@@ -53,14 +59,22 @@ const ListChat = ({navigation}) => {
                 }}>
                     <Image source={IconBack} />
                 </TouchableOpacity>
-                <Text style={{marginLeft: 20}}>List Chat</Text>
+                <Text style={{marginLeft: 20, fontSize: 24}}>List Chat</Text>
             </View>
             <View>
-                {chatList && chatList.map(({chatRoom}, index) => {
-                    return(
-                        <ChatList navigation={navigation} key={index} chatRoom={chatRoom}/>
-                    )
-                })}
+                {loading ? (
+                     <>
+                        {chatList && chatList.map(({chatRoom}, index) => {
+                            return(
+                                <ChatList navigation={navigation} key={index} chatRoom={chatRoom}/>
+                            )
+                        })}
+                    </>
+                ) : (
+                    <View style={{height: '100%', justifyContent: 'center', alignItems: 'center'}}>
+                        <ActivityIndicator size="large" color="red" />
+                    </View>
+                )}
             </View>
         </View>
     )
@@ -71,7 +85,8 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     header: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+        alignItems: 'center'
     },
     line : {
         borderWidth: 1, 

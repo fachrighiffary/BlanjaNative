@@ -28,12 +28,14 @@ export class EditProduct extends Component {
             product_img: [],
             taken_pic: {},
             modalVisible: false,
-            isSetImage: false
+            isSetImage: false,
+            loading: false
         }
     }
     setModalVisible = (visible) => {
         this.setState({ modalVisible: visible });
-      }
+    }
+    
 //  -------------CAMERA----------------------------------------------------------   
     chooseFile = () => {
     ImagePicker.openPicker({
@@ -288,14 +290,20 @@ export class EditProduct extends Component {
                         <View style={{width: 200, height: 100,justifyContent: 'space-between', flexDirection: 'row'}}>
                             <Button 
                             style={styles.modalPicker} 
-                            onPress={this.chooseFile}
+                            onPress={() => {
+                                this.setModalVisible(!modalVisible)
+                                this.chooseFile()
+                            }}
                             >
                                 <Image source={IconGalery} />
                                 <Text>Galery</Text>
                             </Button>
                             <Button 
                             style={styles.modalPicker}  
-                            onPress={this.takePicture}
+                            onPress={() => {
+                                this.setModalVisible(!modalVisible)
+                                this.takePicture()
+                            }}
                             >
                                 <Image source={IconCamera} />
                                 <Text>Camera</Text>
@@ -313,9 +321,6 @@ export class EditProduct extends Component {
                         </View>
                     </View>
                     </Modal>
-
-
-
                     <TouchableOpacity 
                     style={styles.btn}
                     onPress={this.handleUploadProduct}

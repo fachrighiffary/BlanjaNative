@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Input } from 'native-base'
 import React, { Component } from 'react'
-import { Text, View, Image, StyleSheet } from 'react-native'
+import { Text, View, Image, StyleSheet, ActivityIndicator } from 'react-native'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import { IconBack,Product5, Search } from '../../assets'
 import RatingProduct from '../product/rating'
@@ -14,7 +14,8 @@ export class SearchProduct extends Component {
         this.state = {
             search: '',
             msg: '',
-            products:[]
+            products:[],
+            loading : false
         }
     }
 
@@ -27,7 +28,8 @@ export class SearchProduct extends Component {
             console.log(data)
             this.setState({
                 products: data.data.data,
-                msg: data.data.msg
+                msg: data.data.msg,
+                loading: true
             })
         })
         .catch((err) => {
@@ -45,7 +47,7 @@ export class SearchProduct extends Component {
 
     render() {
         console.log(API_URL)
-        const {products, msg } = this.state
+        const {products, msg, loading } = this.state
         return (
             <>
                 <View style={{padding: 16, flexDirection: 'row', paddingTop :20, justifyContent: 'space-between', justifyContent: 'center', alignItems :'center'}}>
@@ -60,6 +62,9 @@ export class SearchProduct extends Component {
                         </TouchableOpacity>
                         <Input 
                         onSubmitEditing = { () => {
+                            this.setState({
+                                loading: false
+                            })
                             this.getData()
                         }}
                         style={{marginLeft: 8}} 
@@ -73,22 +78,30 @@ export class SearchProduct extends Component {
                     <View style={{justifyContent: 'center', alignItems: 'center'}}>
                         <Text style={{fontSize: 20}}>{msg}</Text>
                     </View>
-                    {products && products.map(({id, product_name, store_name, total_rating, product_price, product_img}, index) => {
-                        let httpImage = { uri : API_URL + product_img.split(',')[0]}
-                        return (
-                        <TouchableOpacity style={styles.card} key={index} onPress={() => {
-                            this.goToDetail(id)
-                        }}>
-                            <Image style={styles.img} source={httpImage} />
-                            <View style={{marginLeft: 11, paddingTop: 11}}>
-                                <Text>{product_name}</Text>
-                                <Text>{store_name}</Text>
-                                <RatingProduct total_rating={Math.round(total_rating)}/>
-                                <Text>Rp. {product_price}</Text>
-                            </View>
-                        </TouchableOpacity>
-                        )
-                    })}
+                    {loading ? (
+                        <>
+                            {products && products.map(({id, product_name, store_name, total_rating, product_price, product_img}, index) => {
+                                let httpImage = { uri : API_URL + product_img.split(',')[0]}
+                                return (
+                                <TouchableOpacity style={styles.card} key={index} onPress={() => {
+                                    this.goToDetail(id)
+                                }}>
+                                    <Image style={styles.img} source={httpImage} />
+                                    <View style={{marginLeft: 11, paddingTop: 11}}>
+                                        <Text>{product_name}</Text>
+                                        <Text>{store_name}</Text>
+                                        <RatingProduct total_rating={Math.round(total_rating)}/>
+                                        <Text>Rp. {product_price}</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                )
+                            })}
+                        </>
+                    ) : (
+                        <View style={{height: 500, width: '100%', justifyContent: 'center', alignItems: 'center'}}>
+                            <ActivityIndicator color="red" size="large"/>
+                        </View>
+                    )}
                 </ScrollView>
             </>
         )

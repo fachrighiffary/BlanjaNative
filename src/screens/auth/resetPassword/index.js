@@ -1,6 +1,6 @@
 import { Input } from 'native-base'
 import React, {Component, useState} from 'react'
-import { View, Text, StyleSheet, Image } from 'react-native'
+import { View, Text, StyleSheet, Image, ActivityIndicator } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { IconBack, IconNext } from '../../../assets'
 import {API_URL} from '@env'
@@ -14,18 +14,21 @@ class ResetPassword extends Component{
             email : '',
             password: '',
             newPassword : '',
-            errMsg: ''
+            errMsg: '',
+            loading: false
         }
     }
 
     submitReset = () => {
         if(this.state.password === '' || this.state.newPassword === ''){
             this.setState({
-                errMsg : 'All fields must be filled in'
+                errMsg : 'All fields must be filled in',
+                loading: false
             })
         }else if(this.state.password !== this.state.newPassword){
             this.setState({
-                errMsg : 'Password must be same'
+                errMsg : 'Password must be same',
+                loading: false
             })
         }else{
             const data = {
@@ -38,13 +41,16 @@ class ResetPassword extends Component{
                 this.props.navigation.replace('Login')
             })
             .catch((err) => {
+                this.setState({
+                    loading: false
+                })
                 console.log(err)
             })
         }
     }
 
     render(){
-        const {errMsg} = this.state
+        const {errMsg, loading} = this.state
         const {navigation} = this.props
         return(
             <View style={styles.container}>
@@ -76,12 +82,23 @@ class ResetPassword extends Component{
                             
                         />
                     </View>
-                    <Text style={{marginTop: 10,color: 'red' }}>{errMsg}</Text>
+                    <Text style={{marginTop: 45,color: 'red' }}>{errMsg}</Text>
                 </View>
-                <View style={{alignItems: 'center', marginTop: 22 }}>
-                    <TouchableOpacity style={styles.btnLogin} onPress={this.submitReset}>
-                        <Text style={{color: 'white'}}>Send</Text>
-                    </TouchableOpacity>
+                <View style={{alignItems: 'center', marginTop: 12 }}>
+                    {!loading ? (
+                        <TouchableOpacity style={styles.btnLogin} onPress={() => {
+                            this.setState({
+                                loading: true
+                            })
+                            this.submitReset()
+                        }}>
+                            <Text style={{color: 'white'}}>Send</Text>
+                        </TouchableOpacity>
+                    ) : (
+                        <View style={styles.btnLogin} >
+                            <ActivityIndicator size="large" color="white" />
+                        </View>
+                    )}
                 </View>
             </View>
         )

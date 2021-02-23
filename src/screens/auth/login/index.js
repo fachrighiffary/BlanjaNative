@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios'
 import { Input } from 'native-base'
 import React, { Component, useState } from 'react'
-import { View, Text, StyleSheet, Image, KeyboardAvoidingView } from 'react-native'
+import { View, Text, StyleSheet, Image, KeyboardAvoidingView, ActivityIndicator } from 'react-native'
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler'
 import { connect } from 'react-redux';
 import { IconBack, IconNext } from '../../../assets'
@@ -23,6 +23,7 @@ class Login extends Component{
             textColorsell: 'red',
             backColorsCus: '',
             textColorsCus: 'red',
+            loading: false
         }
     }
 
@@ -58,14 +59,15 @@ class Login extends Component{
             })
             .catch((err) => {
                 this.setState({
-                    errMsg : 'Email / password Salah'
+                    errMsg : 'Email / password Salah',
+                    loading: false
                 })
             })
         }
     }
 
     render() {
-        // console.log(this.state.level)
+        const  {loading} = this.state
         return(
             <KeyboardAvoidingView style={styles.container}>
                 <TouchableOpacity onPress={ () => {
@@ -153,9 +155,22 @@ class Login extends Component{
                         <Text style={{color: 'red', textAlign: 'center'}}>{this.state.errMsg}</Text>
                     </View>
                     <View>
-                        <TouchableOpacity style={styles.btnLogin} onPress={this.handleSubmit}>
-                            <Text style={{color: 'white'}}>LOGIN</Text>
-                        </TouchableOpacity>
+                        {!loading ? (
+                            <TouchableOpacity style={styles.btnLogin} onPress={() => {
+                                this.setState({
+                                    loading: true
+                                })
+                                this.handleSubmit()
+                            }}>
+                                <Text style={{color: 'white'}}>LOGIN</Text>
+                            </TouchableOpacity>
+                        ) : (
+                            <View style={styles.btnLogin}>
+                                <ActivityIndicator size='large' color='white' />
+                            </View>
+                        )}
+
+
                         <TouchableOpacity style={{alignSelf: 'center', marginTop: 10}} onPress={ () => {
                             this.props.navigation.navigate('Register');
                             }}>

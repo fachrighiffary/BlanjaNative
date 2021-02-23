@@ -9,6 +9,7 @@ import axios from 'axios';
 const ChatList = ({navigation, chatRoom}) => {
     const auth = useSelector((state) => state.auth)
     const [name, setName] = useState('loading')
+    const [loading, setLoading] = useState(false)
     useEffect(() => {
         getName()
     }, [chatRoom])

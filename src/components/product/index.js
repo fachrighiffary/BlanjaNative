@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React, {useEffect, useState} from 'react'
-import { Text, View, StyleSheet, Image } from 'react-native'
+import { Text, View, StyleSheet, Image, ActivityIndicator } from 'react-native'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import { Image1, Product1, Star0 } from '../../assets'
 import RatingProduct from './rating'
@@ -11,6 +11,7 @@ const Product = ({status, navigation, url}) => {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
     const [product, setProducts] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         getData();
@@ -22,6 +23,7 @@ const Product = ({status, navigation, url}) => {
         .then(res => {
             //console.log(res.data.data.products)
             setProducts(res.data.data.products)
+            setLoading(true)
         })
         .catch((err) => {
             console.log(err)
@@ -33,7 +35,9 @@ const Product = ({status, navigation, url}) => {
     }
 
     return(
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{marginTop: 22}}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{marginTop: 22}}>
+        {loading ? (
+            <>
                 {product && product.map(
                     ({product_name, product_color, product_size, product_img, product_price, store_name, total_rating, id}, index ) => {
                         let httpImage = { uri : API_URL + product_img.split(',')[0]}
@@ -69,8 +73,22 @@ const Product = ({status, navigation, url}) => {
                         )
                     }
                 )}
-
-            </ScrollView>
+            
+            </>
+        ) : (
+            <View style={{height: 300, width: '100%', flexDirection:'row'}}>
+                <View style={styles.shadow}>
+                    <ActivityIndicator size='large' color="red" />
+                </View>
+                <View style={styles.shadow}>
+                    <ActivityIndicator size='large' color="red" />
+                </View>
+                <View style={styles.shadow}>
+                    <ActivityIndicator size='large' color="red" />
+                </View>                              
+            </View>
+        )}
+        </ScrollView>
     )
 }
 
@@ -111,9 +129,26 @@ const styles = StyleSheet.create({
     },
     card : {
         height: 300, 
+        width: 150,
+        marginRight:20, 
+        marginLeft: 20,             
+    },
+    shadow : {
+        height: 300, 
         width: 148,
         marginRight:20, 
-        marginLeft: 20,                       
+        marginLeft: 20,   
+        justifyContent: 'center',
+        alignItems: 'center', 
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+
+        elevation: 5,
     }
 })
 

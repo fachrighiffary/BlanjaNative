@@ -114,7 +114,7 @@ class Checkout extends Component{
 
                         const data = {
                             id_user : this.props.auth.id,
-                            message : `Hai ${this.props.auth.name}, Selmat transaksi anda telah berhasil dengan Kode transaksi ${Order.trxId}`,
+                            message : `Hai ${this.props.auth.name}, Selamat transaksi anda telah berhasil dengan Kode transaksi ${Order.trxId}`,
                         }
                         axios.post(API_URL + '/notification/', data)
                         .then((res) => {
@@ -126,7 +126,7 @@ class Checkout extends Component{
                         })
                         
                     }).catch(({response}) =>{
-                        console.log(response.data)
+                        console.log(response.data) 
                     })
                 })
                 .catch((err) => {
@@ -228,7 +228,7 @@ class Checkout extends Component{
                     </View>
                     <CheckBox  color="red"  checked={this.state.isCheckedGopay} onPress={this.checkedGopay}/>
                 </View>
-                <View style={styles.payContainer}>
+                <View style={{...styles.payContainer, justifyContent: 'center'}}>
                     <DropDownPicker
                         items={[
                             {label: 'JNE', value: 'jne', hidden: true},
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between', 
         width: 343,
         alignItems: 'center',
-        marginLeft: 16
+        alignSelf: 'center'
     },
     bgIcon : {
         height: 38, 

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Input } from 'native-base'
 import React, {Component, useState} from 'react'
-import { View, Text, StyleSheet, Image } from 'react-native'
+import { View, Text, StyleSheet, Image, ActivityIndicator } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { IconBack, IconNext } from '../../../assets'
 import {API_URL} from '@env'
@@ -14,7 +14,8 @@ class GetOtp extends Component{
         super();
         this.state = {
             otp : '',
-            errMsg: ''
+            errMsg: '',
+            loading : false
         }
     }
     
@@ -22,7 +23,8 @@ class GetOtp extends Component{
     handleSubmit = () => {
         if(this.state.otp === ''){
             this.setState({
-                errMsg: 'The otp code column cannot be empty'
+                errMsg: 'The otp code column cannot be empty',
+                loading: false
             })
         }else{
             const otp = this.state.otp
@@ -35,7 +37,8 @@ class GetOtp extends Component{
             .catch((err) => {
                 console.log(err)
                 this.setState({
-                    errMsg: 'Your otp code is wrong'
+                    errMsg: 'Your otp code is wrong',
+                    loading: false
                 })
             })
         }
@@ -43,7 +46,7 @@ class GetOtp extends Component{
 
     render(){
         const {navigation} = this.props
-        const {errMsg} = this.state
+        const {errMsg, loading} = this.state
         return(
             <View style={styles.container}>
                 <TouchableOpacity onPress={() => {
@@ -70,9 +73,20 @@ class GetOtp extends Component{
                     </Text>
                 </View>
                 <View style={{alignItems: 'center', marginTop: 22 }}>
-                    <TouchableOpacity style={styles.btnLogin} onPress={this.handleSubmit}>
-                        <Text style={{color: 'white'}}>Send</Text>
-                    </TouchableOpacity>
+                    {!loading ? (
+                        <TouchableOpacity style={styles.btnLogin} onPress={() => {
+                            this.setState({
+                                loading: true
+                            })
+                            this.handleSubmit()
+                        }}>
+                            <Text style={{color: 'white'}}>Send</Text>
+                        </TouchableOpacity>
+                    ) : (
+                        <View style={styles.btnLogin} >
+                            <ActivityIndicator color="white" size="large" />
+                        </View>
+                    )}
                 </View>
             </View>
         )

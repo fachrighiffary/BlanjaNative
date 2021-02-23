@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Input,Button } from 'native-base'
 import React, {Component, useState} from 'react'
-import { View, Text, StyleSheet, Image, Modal } from 'react-native'
+import { View, Text, StyleSheet, Image, ToastAndroid, ActivityIndicator } from 'react-native'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import { IconBack, IconNext } from '../../../assets'
 import {API_URL} from "@env"
@@ -23,9 +23,13 @@ class Register extends Component{
             textColorsell: 'red',
             backColorsCus: '',
             textColorsCus: 'red',
+            loading: false
         }
     }
 
+    showToast = () => {
+        ToastAndroid.show("Registrasi berhasil, check email anda", ToastAndroid.LONG);
+      };
  
     handleSubmit = () => {
         const data = {
@@ -33,23 +37,31 @@ class Register extends Component{
             email       : this.state.email,
             phone_number: this.state.phone_number,
             store_name  : this.state.store_name,
+            store_desc  : '0',
+            photo       : '0',
             password    : this.state.password,
-            level_id    : this.state.level
+            level_id    : this.state.level,
         }
+        console.log(data)
         if(this.state.username === '' || this.state.email === '' || this.state.password === '' || this.state.level === '' ||  this.state.level_id === '' || this.state.phone_number === ''){
             this.setState({
-                errorForm: 'Semua Kolom harus diisi \n Seller / costumer harus dipilih'
+                errorForm: 'Semua Kolom harus diisi \n Seller / costumer harus dipilih',
+                store_name: 'Null',
+                loading: false
             })
         }else{
             axios
             .post(API_URL + '/auth/register', data)
-            .then((data) => {
-                // alert(data.data.data.msg)
+            .then((res) => {
+                console.log(res)
+                this.showToast()
                 this.props.navigation.replace('checkOtp', this.state.email)
             })
-            .catch((err) => {
+            .catch(({response}) => {
+                console.log(response)
                 this.setState({
-                    errorForm: 'Email Sudah terdaftar, Gunakan Email Lain'
+                    errorForm: 'Email Sudah terdaftar, Gunakan Email Lain',
+                    loading: false
                 })
             })
         }
@@ -58,7 +70,7 @@ class Register extends Component{
 
 
     render(){
-        let {email, username, password,  store_name, phone_number} = this.state  
+        let {email, username, password,  store_name, phone_number, loading} = this.state  
         let storeName;
         if(this.state.level == 1){
             storeName = 
@@ -168,9 +180,20 @@ class Register extends Component{
                     <Text style={{color: 'red', textAlign: 'center'}}>{this.state.errorForm}</Text>
                 </View>
                 <View style={{alignItems: 'center' }}>
-                    <TouchableOpacity style={styles.btnLogin}  onPress={this.handleSubmit}>
-                        <Text style={{color: 'white'}}>Sign Up</Text>
-                    </TouchableOpacity>
+                    {!loading ? (
+                        <TouchableOpacity style={styles.btnLogin}  onPress={() => {
+                                this.setState({
+                                    loading: true
+                                })
+                                this.handleSubmit()
+                            }}>
+                            <Text style={{color: 'white'}}>Sign Up</Text>
+                        </TouchableOpacity>
+                    ) : (
+                        <View style={styles.btnLogin}  onPress={this.handleSubmit}>
+                            <ActivityIndicator size='large' color='white' />
+                        </View>
+                    )}
                 </View>
             </ScrollView>
         )

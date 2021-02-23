@@ -1,6 +1,6 @@
 import { Button, Input, Right } from 'native-base'
 import React, { Component } from 'react'
-import { StyleSheet, Text, View, Image, Modal } from 'react-native'
+import { StyleSheet, Text, View, Image, Modal, ActivityIndicator } from 'react-native'
 import { ScrollView, TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler'
 import { IconBack, ImgProfile, Star } from '../../assets'
 import RatingProduct from '../product/rating'
@@ -19,7 +19,8 @@ export class RatingReview extends Component {
             comment: '',
             ratingPrdct: '',
             review : [],
-            allRating: 0
+            allRating: 0,
+            loading: false
           };
     }
    
@@ -50,10 +51,14 @@ export class RatingReview extends Component {
         .then((data) => {
             //console.log(data)
             //alert("Review Berhasil DIkirim")
-            this.props.navigation.push('Detail', id)
+            this.getData()
+            // this.props.navigation.push('Detail', id)
+            this.setState({
+                loading: false
+            })
         })
-        .catch((err) => {
-            console.log(err)
+        .catch(({response}) => {
+            console.log(response)
         })
     }
 
@@ -66,12 +71,12 @@ export class RatingReview extends Component {
             //console.log(data.data.data.length)
             this.setState({
                 review : data.data.data,
-                allRating: data.data.data.length
-
+                allRating: data.data.data.length,
+                loading: true
             })
         })
-        .catch((err) => {
-            console.log(err)
+        .catch(({response}) => {
+            console.log(response)
         })
 
     }
@@ -81,9 +86,9 @@ export class RatingReview extends Component {
 
 
     render() {
-        const { modalVisible, review} = this.state;
+        const { modalVisible, review, loading} = this.state;
         return (
-            <View style={{padding: 15}}>
+            <View style={{padding: 15, flex: 1}}>
                 <View style={{marginTop: 9}}>
                     <TouchableOpacity onPress={() => {
                         this.props.navigation.goBack()
@@ -188,26 +193,35 @@ export class RatingReview extends Component {
                 </View>
 
                 {/* Comment Section */}
-                <ScrollView style={{height: 300, width:'100%'}}>
-                    {review && review.map(({user_id, username, rating, comment, input_date}, index) => {
-                        return (
-                            <View style={{marginTop: 44}} key={index}>
-                                <View style={styles.cardComent}>
-                                    <Image source={ImgProfile} style={styles.imgComent}/>
-                                    <View style={styles.cardContainer}>
-                                        <Text>{username}</Text>
-                                        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                                            <RatingProduct total_rating={rating} />
-                                            <Text>{input_date.split("T")[0]}</Text>
+                <ScrollView style={{height: 300, width:'100%', flex: 1}}>
+                    {loading ? (
+                        <>
+                            {review && review.map(({user_id, username, rating, comment, input_date}, index) => {
+                                return (
+                                    <View style={{marginTop: 44}} key={index}>
+                                        <View style={styles.cardComent}>
+                                            <Image source={ImgProfile} style={styles.imgComent}/>
+                                            <View style={styles.cardContainer}>
+                                                <Text>{username}</Text>
+                                                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                                                    <RatingProduct total_rating={rating} />
+                                                    <Text>{input_date.split("T")[0]}</Text>
+                                                </View>
+                                                <Text>
+                                                    {comment} 
+                                                </Text>
+                                            </View>
                                         </View>
-                                        <Text>
-                                            {comment} 
-                                        </Text>
                                     </View>
-                                </View>
-                            </View>
-                        )
-                    })}
+                                )
+                            })}
+                        </>
+
+                    ) : (
+                        <View style={{height: 400, width: '100%', justifyContent: 'center', alignItems: 'center'}}>
+                            <ActivityIndicator size="large" color="red" />
+                        </View>
+                    )}
                 </ScrollView>
                 <View style={{marginTop: 20}}>
                     <View style={styles.borderInput}>
@@ -226,9 +240,6 @@ export class RatingReview extends Component {
                 animationType="slide"
                 transparent={true}
                 visible={modalVisible}
-                onRequestClose={() => {
-                    Alert.alert("Modal has been closed.");
-                }}
                 >
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
@@ -257,10 +268,10 @@ export class RatingReview extends Component {
 
                         <Button
                             style={styles.btnModal}
-                            onPress={() => 
-                            this.handleSubmit()
-                        }
-                        >
+                            onPress={() => {
+                                this.handleSubmit()
+                                this.setModalVisible(!modalVisible);
+                            }}>
                             <Text style={styles.textStyle}>SEND REVIEW</Text>
                         </Button>
                         <Button

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Input } from 'native-base'
 import React, {Component } from 'react'
-import { View, Text, StyleSheet, Image } from 'react-native'
+import { View, Text, StyleSheet, Image, ActivityIndicator } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { IconBack, IconNext } from '../../../assets'
 import { API_URL } from "@env"
@@ -11,7 +11,8 @@ class ForgotPassword extends Component{
     constructor(){
         super();
         this.state = {
-            email : ''
+            email : '',
+            loading: false
         }
     }
 
@@ -26,10 +27,14 @@ class ForgotPassword extends Component{
         })
         .catch((err) => {
             console.log(err)
+            this.setState({
+                loading: false
+            })
         })
     }
 
     render() {
+        const {loading} = this.state
         const {navigation} = this.props
         return(
             <View style={styles.container}>
@@ -53,9 +58,21 @@ class ForgotPassword extends Component{
                     </View>
                 </View>
                 <View style={{alignItems: 'center', marginTop: 32 }}>
-                    <TouchableOpacity style={styles.btnLogin} onPress={this.handleSubmit}>
-                        <Text style={{color: 'white'}}>Send</Text>
-                    </TouchableOpacity>
+                    {!loading ? (
+                        <TouchableOpacity style={styles.btnLogin} onPress={() => {
+                                this.setState({
+                                    loading: true
+                                })
+                                this.handleSubmit()
+                            }}>
+                            <Text style={{color: 'white'}}>Send</Text>
+                        </TouchableOpacity>
+                    ) : (
+                        <View style={styles.btnLogin}>
+                            <ActivityIndicator size="large" color='white' />
+                        </View>
+                    )}
+
                 </View>
             </View>
         )

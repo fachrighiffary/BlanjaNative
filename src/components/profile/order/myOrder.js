@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React, { Component } from 'react'
-import { Text, View, Image, StyleSheet } from 'react-native'
+import { Text, View, Image, StyleSheet, ActivityIndicator } from 'react-native'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import { connect } from 'react-redux'
 import { IconBack, Search } from '../../../assets'
@@ -15,7 +15,8 @@ class MyOrder extends Component {
         super(props);
         this.state = {
             myOrder : [],
-            colorStatus : ''
+            colorStatus : '',
+            loading: false
         }
     }
 
@@ -25,7 +26,8 @@ class MyOrder extends Component {
             .then((res) => {
                 console.log(res.data.data)
                 this.setState({
-                    myOrder: res.data.data
+                    myOrder: res.data.data,
+                    loading: true
                 })
             })
             .catch((err) => {
@@ -38,7 +40,8 @@ class MyOrder extends Component {
             .then((data) => {
                 console.log(data.data.data)
                 this.setState({
-                    myOrder: data.data.data
+                    myOrder: data.data.data,
+                    loading: true
                 })
             })
             .catch((response) => {
@@ -57,6 +60,7 @@ class MyOrder extends Component {
 
 
     render() {
+        const {loading} = this.state
         console.log('ini adalah id usernya',this.props.id)
         const {myOrder} = this.state
         let orderList
@@ -96,23 +100,32 @@ class MyOrder extends Component {
         }
         return (
             <View style={{padding: 14}}>
-                <ScrollView style={{height: 650}} showsVerticalScrollIndicator={false}> 
-                    <View style={{width: '100%', justifyContent: 'space-between', flexDirection: 'row', marginTop: 24}}>
-                        <TouchableOpacity onPress={() => {
-                            this.props.navigation.goBack()
-                        }}>
-                            <Image source={IconBack} />
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Image source={Search} />
-                        </TouchableOpacity>
-                    </View>
+                    <ScrollView style={{height: 650}} showsVerticalScrollIndicator={false}> 
+                        <View style={{width: '100%', justifyContent: 'space-between', flexDirection: 'row', marginTop: 24}}>
+                            <TouchableOpacity onPress={() => {
+                                this.props.navigation.goBack()
+                            }}>
+                                <Image source={IconBack} />
+                            </TouchableOpacity>
+                            <TouchableOpacity>
+                                <Image source={Search} />
+                            </TouchableOpacity>
+                        </View>
 
-                    <View style={{marginTop: 33, marginBottom: 24}}>
-                        <Text style={{fontSize: 34, fontWeight: 'bold'}}>My Orders</Text>
-                    </View>
-                    {orderList}
-                </ScrollView>
+                        <View style={{marginTop: 33, marginBottom: 24}}>
+                            <Text style={{fontSize: 34, fontWeight: 'bold'}}>My Orders</Text>
+                        </View>
+                        {loading ? (
+                            <>
+                                {orderList}
+                            </>
+                        ) : (
+                            <View style={{height: 500, width: '100%', justifyContent: 'center', alignItems: 'center'}}>
+                                <ActivityIndicator size="large" color="red"/>
+                            </View>
+                        )}
+                    </ScrollView>
+                
             </View>
         )
     }

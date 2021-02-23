@@ -82,8 +82,8 @@ class ShipAddress extends Component {
                                         <Text style={{color: '#DB3022'}}>Change</Text>
                                     </TouchableOpacity>
                             </View>
-                            <View style={{height: 42, marginTop: 7, justifyContent: 'space-between', flexDirection: 'row'}}>
-                                <View style={{width: 220}}>
+                            <View style={{minHeight: 42, marginTop: 7, justifyContent: 'space-between', flexDirection: 'row'}}>
+                                <View style={{width: 240}}>
                                     <Text>{address_dtl}</Text>
                                     <Text>{address}</Text>
                                 </View>
@@ -119,7 +119,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     cardAddress: {
-        height: 108,
+        minHeight: 108,
+        maxHeight: 180,
         width: 343,
         backgroundColor: 'white',
         paddingHorizontal: 28,

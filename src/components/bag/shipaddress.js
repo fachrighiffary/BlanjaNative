@@ -116,8 +116,8 @@ export class ShippingAddress extends Component {
                                         <Text style={{color: '#DB3022'}}>Change</Text>
                                     </TouchableOpacity>
                             </View>
-                            <View style={{height: 42, marginTop: 7, justifyContent: 'space-between', flexDirection: 'row'}}>
-                                <View style={{width: 220}}>
+                            <View style={{minHeight: 42, marginTop: 7, justifyContent: 'space-between', flexDirection: 'row'}}>
+                                <View style={{width: 250}}>
                                     <Text>{address_dtl}</Text>
                                     <Text>{address}</Text>
                                 </View>

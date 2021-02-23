@@ -26,7 +26,9 @@ const Home = ({navigation, route}) => {
                     <Text style={styles.txtDesc}>You’ve never seen it before!</Text>
                 </View>
                 
-                <TouchableOpacity >
+                <TouchableOpacity onPress={() => {
+                    navigation.navigate('ViewAll', 'new')
+                }}>
                     <Text style={{marginTop: 51}}>view All</Text>
                 </TouchableOpacity>
             </View>
@@ -38,7 +40,9 @@ const Home = ({navigation, route}) => {
                     <Text style={styles.txtDesc}>You’ve never seen it before!</Text>
                 </View>
                 
-                <TouchableOpacity >
+                <TouchableOpacity onPress={() => {
+                    navigation.navigate('ViewAll', 'popular')
+                }}>
                     <Text style={{marginTop: 51}}>view All</Text>
                 </TouchableOpacity>
             </View>

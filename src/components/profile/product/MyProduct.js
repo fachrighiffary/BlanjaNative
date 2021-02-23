@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
 import React, { Component } from 'react'
-import { Text, View, Image, StyleSheet } from 'react-native'
+import { Text, View, Image, StyleSheet, ActivityIndicator } from 'react-native'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import { IconBack, Product4, Search } from '../../../assets'
 import RatingProduct from '../../product/rating'
@@ -14,7 +14,8 @@ export class MyProduct extends Component {
         super(props);
         this.state = {
             products : [],
-            errMsg : ''
+            errMsg : '',
+            loading: false
         }
     }
 
@@ -31,12 +32,14 @@ export class MyProduct extends Component {
             //console.log(data.data.data)
             this.setState({
                 products : data.data.data,
-                errMsg: data.data.msg
+                errMsg: data.data.msg,
+                loading: true
             })
         })
         .catch((err) => {
             this.setState({
-                errMsg: 'Nothing product'
+                errMsg: 'Nothing product',
+                loading: true
             })
         })
     }
@@ -65,19 +68,27 @@ export class MyProduct extends Component {
 
 
     render() {
-        const {products, errMsg} = this.state
+        const {products, errMsg, loading} = this.state
         let product;
         if(product == []){
             product = 
             <>
-            <View style={{alignSelf: 'center', height: 400, justifyContent: 'center', alignItems: 'center'}}>
-                <Text style={{fontSize: 20}}>{errMsg}</Text>
-            </View>
+            {loading ? (
+                <View style={{alignSelf: 'center', height: 400, justifyContent: 'center', alignItems: 'center'}}>
+                    <Text style={{fontSize: 20}}>{errMsg}</Text>
+                </View>
+            ) : (
+                <View style={{height: 500, justifyContent: 'center', alignItems: 'center'}}>
+                    <ActivityIndicator size="large" color="red" />
+                </View>
+            )}
             </>
         }else{
             product = 
             <>
-            {products && products.map(({id, product_name, product_price, product_img}, index) => {
+            {loading ? (
+                <>
+                    {products && products.map(({id, product_name, product_price, product_img}, index) => {
                         let httpImage = { uri : API_URL + product_img.split(',')[0]}
                         return (
                             <View activeOpacity={0.6} key={index}  style={styles.card}>
@@ -97,11 +108,17 @@ export class MyProduct extends Component {
                             </View>
                         )
                     })}
+                </>
+            ) : (
+                <View style={{height: 500, justifyContent: 'center', alignItems: 'center'}}>
+                    <ActivityIndicator size="large" color="red" />
+                </View>
+            )}
             </>
         }
 
         return (
-            <View style={{padding: 14}}>
+            <View style={{padding: 14, flex: 1}}>
                 <View style={{width: '100%', justifyContent: 'space-between', flexDirection: 'row', marginTop: 24}}>
                     <TouchableOpacity onPress={() => {
                         this.props.navigation.goBack()
@@ -120,18 +137,21 @@ export class MyProduct extends Component {
                 <View style={{justifyContent: 'center', alignItems: 'center'}}>
                     <Text style={{fontSize: 20}}>{errMsg}</Text>
                 </View>
-                <ScrollView style={styles.containerProduct}>
-                    {product}
+                <ScrollView style={styles.containerProduct} showsVerticalScrollIndicator={false}>
+                        {product}
                 </ScrollView>
-                <TouchableOpacity 
-                activeOpacity={0.6} 
-                style={styles.button}
-                onPress={() => {
-                    this.props.navigation.navigate('AddProduct')
-                }}
-                >
-                    <Text style={{color: 'white'}}>Add New Product</Text>
-                </TouchableOpacity>
+                <View style={{height: 50, width: 232, alignSelf: 'center'}}>
+                    <TouchableOpacity 
+                    activeOpacity={0.6} 
+                    style={styles.button}
+                    onPress={() => {
+                        this.props.navigation.navigate('AddProduct')
+                    }}
+                    >
+                        <Text style={{color: 'white'}}>Add New Product</Text>
+                    </TouchableOpacity>
+
+                </View>
             </View>
         )
     }
@@ -192,7 +212,9 @@ const styles = StyleSheet.create({
     containerProduct: {
         width: '100%', 
         height: 400, 
-        marginBottom: 20}
+        marginBottom: 20,
+        flex: 1
+    }
 })
 
 
